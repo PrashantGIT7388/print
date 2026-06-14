@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Table Printer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .controls input, .controls select, .controls button {
+            margin: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .controls button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .controls button:hover {
+            background-color: #45a049;
+        }
+
+        #printBtn {
+            background-color: #2196F3;
+        }
+
+        #printBtn:hover {
+            background-color: #0b7dda;
+        }
+
+        .table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .controls, #printBtn, .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls no-print">
+    <h3>Dynamic Table Generator</h3>
+    <label>Rows: </label>
+    <input type="number" id="rows" min="1" max="50" value="5">
+    
+    <label>Columns: </label>
+    <input type="number" id="cols" min="1" max="20" value="4">
+    
+    <button onclick="generateTable()">Generate Table</button>
+    <button id="printBtn" onclick="printTable()">Print Table</button>
+</div>
+
+<div class="table-container print-area" id="tableContainer">
+    <!-- Dynamic table will be generated here -->
+</div>
+
+<script>
+    // Function to generate dynamic table
+    function generateTable() {
+        const rows = parseInt(document.getElementById('rows').value);
+        const cols = parseInt(document.getElementById('cols').value);
+        const container = document.getElementById('tableContainer');
+        
+        if (isNaN(rows) || isNaN(cols) || rows < 1 || cols < 1) {
+            alert('Please enter valid numbers for rows and columns (minimum 1)');
+            return;
+        }
+        
+        let table = '<table id="dynamicTable">';
+        
+        // Generate table headers
+        table += '<thead><tr>';
+        for (let i = 1; i <= cols; i++) {
+            table += `<th>Header ${i}</th>`;
+        }
+        table += '</tr></thead>';
+        
+        // Generate table body
+        table += '<tbody>';
+        for (let i = 1; i <= rows; i++) {
+            table += '<tr>';
+            for (let j = 1; j <= cols; j++) {
+                table += `<td>Row ${i}, Col ${j}</td>`;
+            }
+            table += '</tr>';
+        }
+        table += '</tbody>';
+        
+        table += '</table>';
+        
+        container.innerHTML = table;
+    }
+    
+    // Function to print the table
+    function printTable() {
+        // Check if table exists
+        const table = document.getElementById('dynamicTable');
+        if (!table) {
+            alert('Please generate a table first!');
+            generateTable(); // Generate default table if none exists
+        }
+        
+        // Trigger browser print dialog
+        window.print();
+    }
+    
+    // Alternative print function with more customization
+    function printTableAdvanced() {
+        const table = document.getElementById('dynamicTable');
+        if (!table) {
+            alert('No table to print. Please generate a table first.');
+            return;
+        }
+        
+        // Get the table HTML
+        const tableHtml = table.outerHTML;
+        
+        // Create print window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Print Dynamic Table</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                        padding: 20px;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin: 20px 0;
+                    }
+                    th, td {
+                        border: 1px solid #ddd;
+                        padding: 12px;
+                        text-align: left;
+                    }
+                    th {
+                        background-color: #4CAF50;
+                        color: white;
+                    }
+                    @media print {
+                        body {
+                            margin: 0;
+                            padding: 15px;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>Dynamic Table Print</h2>
+                ${tableHtml}
+                <p>Printed on: ${new Date().toLocaleString()}</p>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+    }
+    
+    // Function to load data from JSON
+    function loadDataFromJSON(jsonData) {
+        try {
+            const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+            
+            if (!data || !data.length) {
+                throw new Error('Invalid data format');
+            }
+            
+            const container = document.getElementById('tableContainer');
+            let table = '<table id="dynamicTable">';
+            
+            // Generate headers from first object's keys
+            const headers = Object.keys(data[0]);
+            table += '<thead><tr>';
+            headers.forEach(header => {
+                table += `<th>${header}</th>`;
+            });
+            table += '</tr></thead>';
+            
+            // Generate rows
+            table += '<tbody>';
+            data.forEach(row => {
+                table += '<tr>';
+                headers.forEach(header => {
+                    table += `<td>${row[header] || ''}</td>`;
+                });
+                table += '</tr>';
+            });
+            table += '</tbody>';
+            table += '</table>';
+            
+            container.innerHTML = table;
+            
+            // Update row and col inputs
+            document.getElementById('rows').value = data.length;
+            document.getElementById('cols').value = headers.length;
+            
+        } catch (error) {
+            console.error('Error loading JSON:', error);
+            alert('Error loading JSON data. Please check the format.');
+        }
+    }
+    
+    // Example: Load sample data
+    function loadSampleData() {
+        const sampleData = [
+            { Name: 'John Doe', Age: 30, City: 'New York', Occupation: 'Engineer' },
+            { Name: 'Jane Smith', Age: 25, City: 'Los Angeles', Occupation: 'Designer' },
+            { Name: 'Bob Johnson', Age: 35, City: 'Chicago', Occupation: 'Manager' },
+            { Name: 'Alice Brown', Age: 28, City: 'Houston', Occupation: 'Developer' }
+        ];
+        loadDataFromJSON(sampleData);
+    }
+    
+    // Function to add row dynamically
+    function addRow() {
+        const table = document.getElementById('dynamicTable');
+        if (!table) {
+            generateTable();
+            return;
+        }
+        
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const cols = table.rows[0].cells.length;
+        const newRow = tbody.insertRow();
+        
+        for (let i = 0; i < cols; i++) {
+            const cell = newRow.insertCell(i);
+            cell.textContent = `New Row, Col ${i + 1}`;
+        }
+        
+        // Update row count
+        const newRowCount = tbody.rows.length;
+        document.getElementById('rows').value = newRowCount;
+    }
+    
+    // Function to add column dynamically
+    function addColumn() {
+        const table = document.getElementById('dynamicTable');
+        if (!table) {
+            generateTable();
+            return;
+        }
+        
+        // Add header
+        const thead = table.getElementsByTagName('thead')[0];
+        const headerRow = thead.rows[0];
+        const newHeaderCell = headerRow.insertCell();
+        newHeaderCell.textContent = `New Header ${headerRow.cells.length}`;
+        
+        // Add cells to each row
+        const tbody = table.getElementsByTagName('tbody')[0];
+        for (let i = 0; i < tbody.rows.length; i++) {
+            const newCell = tbody.rows[i].insertCell();
+            newCell.textContent = `New Cell ${i + 1}`;
+        }
+        
+        // Update column count
+        document.getElementById('cols').value = headerRow.cells.length;
+    }
+    
+    // Generate initial table on page load
+    window.onload = function() {
+        generateTable();
+        
+        // Add keyboard shortcut for print (Ctrl+P)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                printTable();
+            }
+        });
+    };
+</script>
+
+<!-- Additional controls (optional) -->
+<div class="controls no-print" style="margin-top: 10px;">
+    <button onclick="addRow()">Add Row</button>
+    <button onclick="addColumn()">Add Column</button>
+    <button onclick="loadSampleData()">Load Sample Data</button>
+</div>
+
+</body>
+</html>
