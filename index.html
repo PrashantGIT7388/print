@@ -1,845 +1,1421 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GST Invoice Management System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
+  <title>BWJ Jewellery Manager | Smart Bill Total Control</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            min-height: 100vh;
-        }
+    body {
+      background: #f4f1ea;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+        Helvetica, sans-serif;
+      padding: 16px;
+      color: #1e293b;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
+    .app-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-        .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 20px 30px;
-            text-align: center;
-        }
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
+    .rates-card {
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
 
-        .header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
+    .card-header {
+      padding: 16px 20px 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+      cursor: pointer;
+    }
 
-        .main-content {
-            padding: 30px;
-        }
+    .card-header h2 {
+      font-size: 1.2rem;
+      color: #0f172a;
+      border-left: 4px solid #f5b042;
+      padding-left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        .input-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-        }
+    .card-header h2::after {
+      content: "▼";
+      font-size: 0.8rem;
+      color: #f5b042;
+    }
 
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #1e3c72;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #1e3c72;
-        }
+    .card-header.collapsed h2::after {
+      content: "▶";
+    }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+    .rates-content {
+      transition: max-height 0.3s ease-out, padding 0.3s;
+      overflow: hidden;
+    }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+    .rates-content.collapsed {
+      max-height: 0 !important;
+      padding: 0 20px !important;
+    }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
+    .rates-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 20px 20px 24px 20px;
+    }
 
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: inherit;
-        }
+    .input-row {
+      flex: 1;
+      min-width: 140px;
+      background: #fefcf8;
+      border-radius: 18px;
+      padding: 10px 14px;
+      border: 1px solid #e9e2d4;
+    }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
+    .label-badge {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #3b2e24;
+      margin-bottom: 6px;
+    }
 
-        .items-table-container {
-            margin-top: 20px;
-            overflow-x: auto;
-        }
+    .input-row input {
+      width: 100%;
+      padding: 8px 4px;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      font-weight: 700;
+      outline: none;
+      border-bottom: 2px solid #e9e2d4;
+    }
 
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
+    .currency-hint {
+      font-size: 0.65rem;
+      color: #a18f6f;
+      margin-top: 4px;
+      text-align: right;
+    }
 
-        .items-table th, .items-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+    .action-area {
+      padding: 0 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .items-table th {
-            background: #1e3c72;
-            color: white;
-            font-weight: 600;
-        }
+    .btn-update {
+      background: linear-gradient(105deg, #2c5f2d 0%, #1e3a1e 100%);
+      border: none;
+      padding: 10px 28px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
 
-        .items-table input {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
+    .status-msg {
+      background: #eef2e6;
+      padding: 8px 16px;
+      border-radius: 60px;
+      font-size: 0.75rem;
+      color: #2c5f2d;
+      text-align: center;
+    }
 
-        .btn-add-item {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 14px;
-        }
+    .admin-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
 
-        .btn-add-item:hover {
-            background: #218838;
-        }
+    .admin-modal {
+      background: white;
+      border-radius: 28px;
+      padding: 28px;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
 
-        .btn-remove {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 11px;
-        }
+    .admin-modal h3 {
+      margin-bottom: 16px;
+      color: #1e293b;
+      font-size: 1.2rem;
+    }
 
-        .btn-remove:hover {
-            background: #c82333;
-        }
+    .admin-modal input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e2dbcf;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
 
-        .action-buttons {
-            margin-top: 25px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+    .admin-modal button {
+      background: #2c5f2d;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 6px;
+      font-size: 0.9rem;
+    }
 
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
+    .admin-badge {
+      background: #f5b042;
+      color: #1e2a2f;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
 
-        .btn:hover {
-            transform: translateY(-2px);
-        }
+    .brand-bar {
+      background: #1e2a2f;
+      border-radius: 28px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
-        .btn-primary {
-            background: #1e3c72;
-            color: white;
-        }
+    .brand-bar h1 {
+      color: #f5b042;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .btn-primary:hover {
-            background: #2a5298;
-        }
+    .brand-bar h1::before {
+      content: "💎";
+      font-size: 1.4rem;
+    }
 
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
+    .admin-toggle {
+      background: #f5b04220;
+      border: 1px solid #f5b042;
+      padding: 6px 16px;
+      border-radius: 40px;
+      color: #f5b042;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
 
-        .btn-print {
-            background: #17a2b8;
-            color: white;
-        }
+    .estimator-card,
+    .bill-card,
+    .adjustment-card {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
 
-        .btn-print:hover {
-            background: #138496;
-        }
+    .estimator-header,
+    .bill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
 
-        .preview-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-        }
+    .bill-header h3 {
+      font-size: 1.2rem;
+      border-left: 4px solid #f5b042;
+      padding-left: 12px;
+    }
 
-        .preview-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
+    .total-control-bar {
+      background: linear-gradient(135deg, #fef9ef 0%, #fff6e8 100%);
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid #f5dca0;
+    }
 
-        .preview-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    .total-badge {
+      display: flex;
+      flex-direction: column;
+      background: #ffffffcc;
+      border-radius: 16px;
+      padding: 6px 14px;
+      backdrop-filter: blur(2px);
+      min-width: 90px;
+    }
 
-        .preview-table th, .preview-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
+    .total-badge span:first-child {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #8b5a2b;
+      text-transform: uppercase;
+    }
 
-        .preview-table th {
-            background: #f0f0f0;
-            font-weight: bold;
-        }
-    </style>
+    .total-badge span:last-child {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #2c5f2d;
+      letter-spacing: -0.02em;
+    }
+
+    .total-edit-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: #fff;
+      padding: 6px 14px;
+      border-radius: 50px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .total-edit-area label {
+      font-weight: 700;
+      color: #5a4a3a;
+      font-size: 0.75rem;
+    }
+
+    .total-edit-area input {
+      width: 130px;
+      padding: 6px 10px;
+      border: 2px solid #f5b042;
+      border-radius: 40px;
+      font-weight: 700;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .apply-total-btn {
+      background: #2c5f2d;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: 0.1s;
+    }
+
+    .reset-bill-total {
+      background: #e6d9ce;
+      color: #5a4a3a;
+    }
+
+    .horizontal-fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .field-group {
+      flex: 1;
+      min-width: 130px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #5b6e5c;
+    }
+
+    select, input {
+      padding: 10px 12px;
+      border: 1.5px solid #e2dbcf;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      background: #ffffff;
+    }
+
+    .btn-add {
+      background: #e67e22;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .btn-add:active {
+      transform: scale(0.95);
+    }
+
+    .price-cards {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: #fefaf5;
+      border-radius: 20px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .price-item {
+      flex: 1;
+      background: white;
+      border-radius: 16px;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #f1e7db;
+      min-width: 100px;
+    }
+
+    .price-item.gst-hidden {
+      display: none;
+    }
+
+    .price-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #8b7a66;
+    }
+
+    .price-value {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #c0392b;
+      margin-top: 4px;
+    }
+
+    .making-input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1.5px solid #e2dbcf;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    .auto-badge {
+      font-size: 0.7rem;
+      color: #141c8b;
+      margin-top: 3px;
+    }
+
+    .stone-amount-container {
+      margin-top: 6px;
+      animation: fadeIn 0.2s;
+    }
+
+    .stone-amount-container.hidden {
+      display: none;
+    }
+
+    .bill-table-wrapper,
+    .adjustment-table-wrapper {
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .adjustment-table-wrapper.toggleable.visible {
+      display: block;
+    }
+
+    .bill-table,
+    .adjustment-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+      min-width: 500px;
+    }
+
+    .bill-table th,
+    .adjustment-table th {
+      background: #f8f3ed;
+      padding: 10px 6px;
+      position: sticky;
+      top: 0;
+      font-size: 0.7rem;
+    }
+
+    .bill-table td,
+    .adjustment-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #efe4d8;
+      text-align: center;
+    }
+
+    .bill-table tbody tr:nth-child(even),
+    .adjustment-table tbody tr:nth-child(even) {
+      background-color: #f5ebeb;
+    }
+
+    .bill-table tbody tr:nth-child(odd),
+    .adjustment-table tbody tr:nth-child(odd) {
+      background-color: #fefaf5;
+    }
+
+    .delete-item {
+      background: #fee2e2;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 30px;
+      color: #b91c1c;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .adjustment-input {
+      width: 100px;
+      padding: 6px;
+      border: 1.5px solid #f5b042;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 0.7rem;
+    }
+
+    .grand-total,
+    .grand-total-adjust {
+      background: #fff6ea;
+      border-radius: 18px;
+      padding: 12px 18px;
+      margin-top: 16px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border-left: 4px solid #f5b042;
+    }
+
+    .grand-total-adjust {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .grand-total-adjust span {
+      font-size: 0.85rem;
+    }
+
+    .grand-total-adjust input {
+      width: 140px;
+      padding: 6px 8px;
+      font-size: 0.85rem;
+    }
+
+    .view-btn {
+      background: #3d8b3d;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .btn-clear {
+      background: #e6d9ce;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .helper-note {
+      font-size: 0.65rem;
+      color: #7c6e58;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.65rem;
+      color: #998f7e;
+    }
+
+    #horizontal_tables {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    #horizontal_tables .adjustment-card {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    input:focus,
+    select:focus,
+    button:focus {
+      outline: 2px solid #f5b042;
+      outline-offset: 2px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      .app-container { max-width: 100%; }
+      .brand-bar h1 { font-size: 1.1rem; }
+      .brand-bar h1::before { font-size: 1.2rem; }
+      .admin-toggle { padding: 5px 12px; font-size: 0.7rem; }
+      .estimator-card, .bill-card, .adjustment-card { padding: 16px; margin-bottom: 16px; border-radius: 20px; }
+      .estimator-header h3, .bill-header h3 { font-size: 1.1rem; }
+      /* .horizontal-fields { flex-direction: column; gap: 10px; } */
+      .horizontal-fields {
+       display: grid;
+      grid-template-columns: 1fr 1fr; /* Creates 2 equal columns */
+        gap: 15pxx;
+}
+      .horizontal-fields .field-group:nth-child(3) {
+      display: none;
+    }
+      .field-group { min-width: 100%; width: 100%; }
+      .btn-add { width: 100%; text-align: center; justify-content: center; }
+      /* .price-cards { flex-direction: column; gap: 8px; }
+      .price-item:first-child {
+      display: none;
+    } */
+        .price-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+        .price-cards .price-item:first-child {
+    display: none;
+  } 
+      .price-item { min-width: auto; }
+      .price-value { font-size: 1rem; }
+      .total-control-bar { flex-direction: column; align-items: stretch; padding: 12px; }
+      .total-badge { flex-direction: row; justify-content: space-between; align-items: center; padding: 8px 12px; }
+      .total-badge span:first-child { font-size: 0.7rem; }
+      .total-badge span:last-child { font-size: 1rem; }
+      .total-edit-area { justify-content: center; flex-wrap: wrap; }
+      .total-edit-area input { width: 100%; max-width: 200px; }
+      .apply-total-btn, .reset-bill-total { padding: 6px 12px; font-size: 0.7rem; }
+      .grand-total-adjust { flex-direction: column; align-items: stretch; gap: 8px; }
+      .grand-total-adjust input { width: 100%; }
+      .grand-total-adjust span { font-size: 0.8rem; }
+      .adjustment-input { width: 80px; font-size: 0.65rem; padding: 4px; }
+      .bill-table th, .bill-table td, .adjustment-table th, .adjustment-table td { padding: 6px 4px; font-size: 0.65rem; }
+      .delete-item { padding: 3px 8px; font-size: 0.65rem; }
+      .view-btn, .btn-clear { padding: 5px 10px; font-size: 0.65rem; }
+      .card-header { padding: 12px 16px 0 16px; }
+      .card-header h2 { font-size: 1rem; }
+      .rates-grid { gap: 8px; padding: 16px; }
+      .input-row { min-width: 100%; padding: 8px 12px; }
+      .label-badge { font-size: 0.8rem; }
+      #horizontal_tables { flex-direction: column; gap: 16px; }
+      #horizontal_tables .adjustment-card { min-width: 100%; }
+      .bill-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .bill-header div { display: flex; flex-wrap: wrap; gap: 8px; }
+      .auto-badge { font-size: 0.6rem; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 8px; }
+      .estimator-card, .bill-card, .adjustment-card { padding: 12px; border-radius: 18px; }
+      .price-value { font-size: 0.9rem; }
+      .total-badge span:last-child { font-size: 0.9rem; }
+      .grand-total, .grand-total-adjust { padding: 10px 12px; font-size: 0.85rem; }
+      select, input { padding: 8px 10px; font-size: 0.8rem; }
+    }
+  </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="header">
-        <h1>🏪 GST Invoice Management System</h1>
-        <p>Professional Invoice Generator with Print Feature</p>
+  <div class="app-container">
+    <div class="rates-card" id="ratesCard" style="display: none">
+      <div class="card-header" id="ratesHeader">
+        <h2>📊 Metal Rate Configuration <span class="admin-badge">Admin Only</span></h2>
+        <div class="status-msg" id="statusMessage">Rates Loaded</div>
+      </div>
+      <div class="rates-content" id="ratesContent">
+        <div class="rates-grid">
+          <div class="input-row"><div class="label-badge">18K Gold</div><input type="text" id="gold18KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+          <div class="input-row"><div class="label-badge">20K Gold</div><input type="text" id="gold20KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+          <div class="input-row"><div class="label-badge">22K Gold</div><input type="text" id="gold22KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+          <div class="input-row"><div class="label-badge">24K Gold</div><input type="text" id="gold24KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+          <div class="input-row"><div class="label-badge">Silver</div><input type="text" id="silverRate" placeholder="₹/kg" /><div class="currency-hint">₹ / 1kg</div></div>
+          <div class="input-row"><div class="label-badge">925 Silver</div><input type="text" id="silver925Rate" placeholder="₹/kg" /><div class="currency-hint">₹ / 1kg</div></div>
+        </div>
+        <div class="action-area"><button class="btn-update" id="submit">⟳ Update Rates</button></div>
+      </div>
     </div>
 
-    <div class="main-content">
-        <div class="input-section">
-            <div class="section-title">📝 Invoice Details</div>
-            
-            <div class="form-row">
-                <div>
-                    <div class="form-group">
-                        <label>Customer Name *</label>
-                        <input type="text" id="customerName" value="SHIVAM KUMAR" placeholder="Enter customer name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Customer Address</label>
-                        <textarea id="customerAddress">KOYLA NAGAR KANPUR</textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Mobile Number</label>
-                        <input type="text" id="mobileNo" value="9044269139" placeholder="Enter mobile number">
-                    </div>
-                </div>
-                
-                <div>
-                    <div class="form-group">
-                        <label>State</label>
-                        <select id="state">
-                            <option value="09 - UTTAR PRADESH">09 - UTTAR PRADESH</option>
-                            <option value="10 - DELHI">10 - DELHI</option>
-                            <option value="27 - MAHARASHTRA">27 - MAHARASHTRA</option>
-                            <option value="29 - KARNATAKA">29 - KARNATAKA</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Invoice No.</label>
-                        <input type="text" id="invoiceNo" value="GI2627/1064" placeholder="Enter invoice number">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Invoice Date</label>
-                        <input type="date" id="invoiceDate" value="2026-06-14">
-                    </div>
-                </div>
-            </div>
-
-            <div class="section-title" style="margin-top: 20px;">📦 Items Details</div>
-            <div class="items-table-container">
-                <table class="items-table" id="itemsTable">
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>HUID</th>
-                            <th>HSN Code</th>
-                            <th>Purity</th>
-                            <th>Gross Wt (g)</th>
-                            <th>Net Wt (g)</th>
-                            <th>Rate (₹/g)</th>
-                            <th>Labour (₹)</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="itemsBody">
-                        <tr>
-                            <td><input type="text" class="item-name" value="GOLD ORNAMENT ring 1"></td>
-                            <td><input type="text" class="item-huid" value="711319"></td>
-                            <td><input type="text" class="item-hsn" value="711319"></td>
-                            <td><input type="text" class="item-purity" value="18K"></td>
-                            <td><input type="number" class="item-gross" value="1.870" step="0.001"></td>
-                            <td><input type="number" class="item-net" value="1.870" step="0.001"></td>
-                            <td><input type="number" class="item-rate" value="11400" step="1"></td>
-                            <td><input type="number" class="item-labour" value="2720" step="1"></td>
-                            <td><button class="btn-remove" onclick="removeRow(this)">✖ Remove</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" class="item-name" value="GOLD ORNAMENT ring 1"></td>
-                            <td><input type="text" class="item-huid" value="711319"></td>
-                            <td><input type="text" class="item-hsn" value="711319"></td>
-                            <td><input type="text" class="item-purity" value="18K"></td>
-                            <td><input type="number" class="item-gross" value="1.540" step="0.001"></td>
-                            <td><input type="number" class="item-net" value="1.540" step="0.001"></td>
-                            <td><input type="number" class="item-rate" value="11400" step="1"></td>
-                            <td><input type="number" class="item-labour" value="2240" step="1"></td>
-                            <td><button class="btn-remove" onclick="removeRow(this)">✖ Remove</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <button class="btn-add-item" onclick="addItemRow()">+ Add More Item</button>
-
-            <div class="form-row" style="margin-top: 20px;">
-                <div>
-                    <div class="form-group">
-                        <label>Discount (₹)</label>
-                        <input type="number" id="discount" value="0" placeholder="Discount amount">
-                    </div>
-                </div>
-                <div>
-                    <div class="form-group">
-                        <label>GST Rate (%)</label>
-                        <select id="gstRate">
-                            <option value="1.5">1.5% (CGST 1.5% + SGST 1.5%)</option>
-                            <option value="2.5">2.5% (CGST 2.5% + SGST 2.5%)</option>
-                            <option value="6">6% (CGST 6% + SGST 6%)</option>
-                            <option value="9">9% (CGST 9% + SGST 9%)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div>
-                    <div class="form-group">
-                        <label>Receipt UPI (₹)</label>
-                        <input type="number" id="receiptUPI" value="0" placeholder="UPI payment">
-                    </div>
-                </div>
-                <div>
-                    <div class="form-group">
-                        <label>Receipt Cash (₹)</label>
-                        <input type="number" id="receiptCash" value="0" placeholder="Cash payment">
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="updatePreview()">🔄 Update Preview</button>
-                <button class="btn btn-print" onclick="printInvoice()">🖨️ Print Invoice</button>
-            </div>
-        </div>
-
-        <div class="preview-section">
-            <div class="section-title">📋 Quick Preview</div>
-            <div class="preview-content" id="quickPreview">
-                <p style="color: #666; text-align: center;">Click "Update Preview" to see invoice summary</p>
-            </div>
-        </div>
+    <div class="brand-bar">
+      <h1>BWJ Jewellery Calculator</h1>
+      <button id="adminToggleBtn" class="admin-toggle">🔐 Admin Access</button>
     </div>
-</div>
 
-<script>
-    // Add new item row
-    function addItemRow() {
-        const tbody = document.getElementById('itemsBody');
-        const newRow = tbody.insertRow();
-        newRow.innerHTML = `
-            <td><input type="text" class="item-name" placeholder="Item name"></td>
-            <td><input type="text" class="item-huid" placeholder="HUID"></td>
-            <td><input type="text" class="item-hsn" placeholder="HSN Code"></td>
-            <td><input type="text" class="item-purity" placeholder="Purity"></td>
-            <td><input type="number" class="item-gross" step="0.001" placeholder="Gross Wt"></td>
-            <td><input type="number" class="item-net" step="0.001" placeholder="Net Wt"></td>
-            <td><input type="number" class="item-rate" step="1" placeholder="Rate"></td>
-            <td><input type="number" class="item-labour" step="1" placeholder="Labour"></td>
-            <td><button class="btn-remove" onclick="removeRow(this)">✖ Remove</button></td>
-        `;
-        updatePreview();
+    <div class="estimator-card">
+      <div class="estimator-header">
+        <h3>⚡ Instant Price Estimator</h3>
+        <div class="helper-note">⏎ Enter to navigate</div>
+      </div>
+      <div class="horizontal-fields">
+        <div class="field-group"><label>METAL TYPE</label><select id="metal" tabindex="1">
+            <option value="18">18K Gold</option><option value="20">20K Gold</option><option value="22">22K Gold</option>
+            <option value="24">24K Gold</option><option value="1">Pure Silver</option><option value="92.5">925 Silver</option>
+          </select></div>
+        <div class="field-group" id="dynamicTypeContainer"><label>ITEM VARIANT</label><select id="dynamicItemSelect" tabindex="2"></select></div>
+        <div class="field-group"><label>Extra Removal</label><select id="dynamicextraweightremove" tabindex="3">
+            <option value="default">Default</option><option value="tag-remove">Tag remove</option>
+            <option value="stone-remove">Stone remove</option><option value="tag-stone-remove">Tag & Stone</option>
+          </select>
+          <div id="stoneAmountContainer" class="stone-amount-container hidden"><input type="number" id="stoneAmount" placeholder="Stone Amount (₹)" step="any" value="0" tabindex="4" /></div>
+        </div>
+        <div class="field-group"><label>WEIGHT (g)</label><input type="number" id="weight" placeholder="0.00" step="any" value="0" tabindex="5" /></div>
+        <div class="btn-row"><button class="btn-add" id="addBtn" tabindex="6">➕ Add to Bill</button></div>
+      </div>
+      <div class="price-cards">
+        <div class="price-item"><div class="price-label">💰 Metal Value</div><div class="price-value" id="metalValueDisplay">₹0.00</div></div>
+        <div class="price-item"><div class="price-label">🔨 Making %</div><input type="number" id="makingpercentage" class="making-input" placeholder="Auto" step="any" tabindex="7" /><div class="auto-badge" id="autoPercentHint">Auto: --%</div></div>
+        <div class="price-item"><div class="price-label">🔨 Making (₹)</div><input type="number" id="makingChargeInput" class="making-input" placeholder="Auto" step="any" tabindex="8" /><div class="auto-badge" id="autoChargeHint">Auto: ₹--</div></div>
+        <div class="price-item" id="beforeGstItem"><div class="price-label" id="beforeGstLabel">📦 Price BEFORE GST</div><div class="price-value" id="result_before_gst">₹0.00</div></div>
+        <div class="price-item" id="afterGstItem"><div class="price-label">✅ AFTER GST (3%)</div><div class="price-value" id="result_after_gst">₹0.00</div></div>
+      </div>
+    </div>
+
+    <div class="bill-card">
+      <div class="bill-header">
+        <h3>🧾 Bill Register</h3>
+        <button id="clearAllBtn" class="btn-clear">🗑️ Clear All</button>
+      </div>
+      <div id="billContainer" class="bill-table-wrapper">
+        <div class="empty-bill" style="text-align:center; padding:2rem;">✨ No items added.</div>
+      </div>
+      <div class="grand-total" id="grandTotalDisplay">💰 Grand Total (incl. GST): ₹ 0.00</div>
+    </div>
+
+    <div id="horizontal_tables">
+      <div class="adjustment-card">
+        <div class="bill-header">
+          <h3>✏️ GOLD Items Only</h3>
+          <div><button id="viewGoldBtn" class="view-btn">👁️ View Gold</button><button id="resetGoldAdjustBtn" class="btn-clear">⟳ Reset Gold</button></div>
+        </div>
+        <div id="goldAdjustContainer" class="adjustment-table-wrapper toggleable"><div style="text-align:center; padding:2rem;">✨ Add gold items to enable adjustments</div></div>
+        <div class="grand-total-adjust"><span>🎯 Adjust Gold Total:</span><input type="number" id="goldGrandTotalInput" placeholder="Desired gold total" step="any" value="0" /><button id="applyGoldTotalBtn" class="view-btn">Update</button></div>
+        <div class="grand-total" id="goldAdjustedTotal">💰 Adjusted Gold Total: ₹ 0.00</div>
+      </div>
+
+      <div class="adjustment-card">
+        <div class="bill-header">
+          <h3>✏️ SILVER Items Only</h3>
+          <div><button id="viewSilverBtn" class="view-btn">👁️ View Silver</button><button id="resetSilverAdjustBtn" class="btn-clear">⟳ Reset Silver</button></div>
+        </div>
+        <div id="silverAdjustContainer" class="adjustment-table-wrapper toggleable"><div style="text-align:center; padding:2rem;">✨ Add silver items to enable adjustments</div></div>
+        <div class="grand-total-adjust"><span>🎯 Adjust Silver Total :</span><input type="number" id="silverGrandTotalInput" placeholder="Desired silver total" step="any" value="0" /><button id="applySilverTotalBtn" class="view-btn">Update</button></div>
+        <div class="grand-total" id="silverAdjustedTotal">💰 Adjusted Silver Total: ₹ 0.00</div>
+      </div>
+    </div>
+
+    <div class="total-control-bar" id="totalControlPanel">
+      <div class="total-badge"><span>💰 GOLD TOTAL</span><span id="summaryGoldTotal">₹0</span></div>
+      <div class="total-badge"><span>🥈 SILVER TOTAL</span><span id="summarySilverTotal">₹0</span></div>
+      <div class="total-badge"><span>🧾 BILL GRAND TOTAL</span><span id="summaryBillGrandTotal">₹0</span></div>
+      <div class="total-edit-area">
+        <label>✏️ Edit Bill Total:</label>
+        <input type="number" id="manualBillTotalInput" placeholder="Enter new total" step="any" value="0" />
+        <button id="applyBillTotalBtn" class="apply-total-btn">Apply & Adjust Gold</button>
+        <button id="resetBillTotalBtn" class="apply-total-btn reset-bill-total">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== ADMIN AUTHENTICATION ==========
+
+  const API_BASE = 'https://bwjbackend.onrender.com/api';
+    let isAdminAuthenticated = false;
+    const ADMIN_PASSWORD = "00..";
+
+    function showAdminModal() {
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-overlay';
+      overlay.innerHTML = `<div class="admin-modal"><h3>🔐 Admin Access Required</h3><input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="off"><div><button id="adminSubmitBtn">Submit</button><button id="adminCancelBtn" class="cancel-btn">Cancel</button></div></div>`;
+      document.body.appendChild(overlay);
+      const passwordInput = overlay.querySelector('#adminPassword');
+      const submitBtn = overlay.querySelector('#adminSubmitBtn');
+      const cancelBtn = overlay.querySelector('#adminCancelBtn');
+      passwordInput.focus();
+      submitBtn.addEventListener('click', function () {
+        if (passwordInput.value === ADMIN_PASSWORD) {
+          isAdminAuthenticated = true;
+          document.getElementById('ratesCard').style.display = 'block';
+          overlay.remove();
+          alert('✅ Admin access granted.');
+        } else { alert('❌ Invalid password!'); passwordInput.value = ''; passwordInput.focus(); }
+      });
+      cancelBtn.addEventListener('click', function () { overlay.remove(); });
+      passwordInput.addEventListener('keypress', function (e) { if (e.key === 'Enter') submitBtn.click(); });
     }
 
-    // Remove row
-    function removeRow(button) {
-        const row = button.closest('tr');
-        row.remove();
-        updatePreview();
-    }
-
-    // Calculate all totals
-    function calculateAllTotals() {
-        const items = document.querySelectorAll('#itemsBody tr');
-        let totalValue = 0;
-        let totalLabour = 0;
-        let totalGrossWeight = 0;
-        let totalNetWeight = 0;
-        let itemsData = [];
-
-        items.forEach(item => {
-            const itemName = item.querySelector('.item-name')?.value || '';
-            const huid = item.querySelector('.item-huid')?.value || '';
-            const hsn = item.querySelector('.item-hsn')?.value || '';
-            const purity = item.querySelector('.item-purity')?.value || '';
-            const grossWeight = parseFloat(item.querySelector('.item-gross')?.value) || 0;
-            const netWeight = parseFloat(item.querySelector('.item-net')?.value) || 0;
-            const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
-            const labour = parseFloat(item.querySelector('.item-labour')?.value) || 0;
-            
-            const value = rate * netWeight;
-            const amount = value + labour;
-            
-            totalValue += value;
-            totalLabour += labour;
-            totalGrossWeight += grossWeight;
-            totalNetWeight += netWeight;
-            
-            itemsData.push({
-                itemName, huid, hsn, purity, grossWeight, netWeight, rate, value, labour, amount
-            });
-        });
-
-        return { totalValue, totalLabour, totalGrossWeight, totalNetWeight, itemsData };
-    }
-
-    // Get invoice data
-    function getInvoiceData() {
-        const customerName = document.getElementById('customerName').value;
-        const customerAddress = document.getElementById('customerAddress').value;
-        const mobileNo = document.getElementById('mobileNo').value;
-        const state = document.getElementById('state').value;
-        const invoiceNo = document.getElementById('invoiceNo').value;
-        const invoiceDate = document.getElementById('invoiceDate').value;
-        const discount = parseFloat(document.getElementById('discount').value) || 0;
-        const receiptUPI = parseFloat(document.getElementById('receiptUPI').value) || 0;
-        const receiptCash = parseFloat(document.getElementById('receiptCash').value) || 0;
-        const gstRate = parseFloat(document.getElementById('gstRate').value) || 1.5;
-
-        const { totalValue, totalLabour, totalGrossWeight, totalNetWeight, itemsData } = calculateAllTotals();
-        
-        const subtotal = totalValue + totalLabour;
-        const taxableAmount = subtotal - discount;
-        const cgst = taxableAmount * (gstRate / 100);
-        const sgst = taxableAmount * (gstRate / 100);
-        const grandTotal = taxableAmount + cgst + sgst;
-        const totalGST = cgst + sgst;
-        
-        return {
-            customerName, customerAddress, mobileNo, state, invoiceNo, invoiceDate,
-            discount, receiptUPI, receiptCash, gstRate,
-            totalValue, totalLabour, totalGrossWeight, totalNetWeight, itemsData,
-            subtotal, taxableAmount, cgst, sgst, grandTotal, totalGST
-        };
-    }
-
-    // Convert number to words
-    function numberToWords(num) {
-        if (num === 0) return 'Zero';
-        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-        const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-        
-        function convertHundreds(n) {
-            let str = '';
-            if (n >= 100) {
-                str += ones[Math.floor(n / 100)] + ' Hundred ';
-                n %= 100;
-            }
-            if (n >= 20) {
-                str += tens[Math.floor(n / 10)] + ' ';
-                n %= 10;
-            } else if (n >= 10) {
-                str += teens[n - 10] + ' ';
-                n = 0;
-            }
-            if (n > 0) {
-                str += ones[n] + ' ';
-            }
-            return str.trim();
-        }
-        
-        let result = '';
-        if (num >= 100000) {
-            result += convertHundreds(Math.floor(num / 100000)) + ' Lakh ';
-            num %= 100000;
-        }
-        if (num >= 1000) {
-            result += convertHundreds(Math.floor(num / 1000)) + ' Thousand ';
-            num %= 1000;
-        }
-        if (num > 0) {
-            result += convertHundreds(num);
-        }
-        return result.trim();
-    }
-
-    // Update quick preview
-    function updatePreview() {
-        const data = getInvoiceData();
-        const previewDiv = document.getElementById('quickPreview');
-        
-        if (data.itemsData.length === 0) {
-            previewDiv.innerHTML = '<p style="color: #666; text-align: center;">No items added. Please add at least one item.</p>';
-            return;
-        }
-        
-        previewDiv.innerHTML = `
-            <table class="preview-table">
-                <tr style="background-color: #e3f2fd;">
-                    <th>Total Items</th>
-                    <td>${data.itemsData.length}</td>
-                    <th>Total Net Weight</th>
-                    <td>${data.totalNetWeight.toFixed(3)} g</td>
-                </tr>
-                <tr>
-                    <th>Total Value</th>
-                    <td>₹ ${data.totalValue.toFixed(2)}</td>
-                    <th>Total Labour</th>
-                    <td>₹ ${data.totalLabour.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <th>Subtotal</th>
-                    <td>₹ ${(data.totalValue + data.totalLabour).toFixed(2)}</td>
-                    <th>Discount</th>
-                    <td>₹ ${data.discount.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <th>Taxable Amount</th>
-                    <td>₹ ${data.taxableAmount.toFixed(2)}</td>
-                    <th>GST (${data.gstRate}% + ${data.gstRate}%)</th>
-                    <td>₹ ${data.totalGST.toFixed(2)}</td>
-                </tr>
-                <tr style="background-color: #e8f5e9; font-weight: bold;">
-                    <th>Grand Total</th>
-                    <td colspan="3">₹ ${data.grandTotal.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <th>Payment Received</th>
-                    <td colspan="3">₹ ${(data.receiptUPI + data.receiptCash).toFixed(2)}</td>
-                </tr>
-                <tr style="background-color: #fff3e0;">
-                    <th>Balance Due</th>
-                    <td colspan="3" style="color: #dc3545; font-weight: bold;">₹ ${(data.grandTotal - (data.receiptUPI + data.receiptCash)).toFixed(2)}</td>
-                </tr>
-            </table>
-        `;
-    }
-
-    // Main Print Function - Opens invoice in new window and prints
-    function printInvoice() {
-        const data = getInvoiceData();
-        
-        // Check if there are items
-        if (data.itemsData.length === 0) {
-            alert('Please add at least one item before printing!');
-            return;
-        }
-        
-        // Format date
-        const formattedDate = new Date(data.invoiceDate).toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
-        
-        // Generate items HTML
-        let itemsHtml = '';
-        data.itemsData.forEach((item) => {
-            itemsHtml += `
-                <tr>
-                    <td style="border:1px solid #000; padding:8px;">${item.itemName}</td>
-                    <td style="border:1px solid #000; padding:8px;">${item.huid}</td>
-                    <td style="border:1px solid #000; padding:8px;">${item.hsn}</td>
-                    <td style="border:1px solid #000; padding:8px;">${item.purity}</td>
-                    <td style="border:1px solid #000; padding:8px; text-align:right;">${item.grossWeight.toFixed(3)}</td>
-                    <td style="border:1px solid #000; padding:8px; text-align:right;">${item.netWeight.toFixed(3)}</td>
-                    <td style="border:1px solid #000; padding:8px; text-align:right;">${item.rate.toFixed(2)}</td>
-                    <td style="border:1px solid #000; padding:8px; text-align:right;">${item.value.toFixed(2)}</td>
-                    <td style="border:1px solid #000; padding:8px; text-align:right;">${item.labour.toFixed(2)}</td>
-                    <td style="border:1px solid #000; padding:8px; text-align:right;">${item.amount.toFixed(2)}</td>
-                </tr>
-            `;
-        });
-        
-        // Create complete invoice HTML
-        const invoiceHTML = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <title>TAX INVOICE - ${data.invoiceNo}</title>
-                <style>
-                    * {
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
-                    body {
-                        font-family: 'Courier New', monospace;
-                        padding: 20px;
-                        background: white;
-                    }
-                    .invoice {
-                        max-width: 1200px;
-                        margin: 0 auto;
-                    }
-                    .header {
-                        text-align: center;
-                        margin-bottom: 20px;
-                        padding-bottom: 10px;
-                        border-bottom: 2px solid #000;
-                    }
-                    .header h1 {
-                        font-size: 24px;
-                        margin-bottom: 5px;
-                    }
-                    .customer-section {
-                        margin-bottom: 20px;
-                        padding: 10px;
-                        border: 1px solid #ddd;
-                        background: #f9f9f9;
-                    }
-                    .items-table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-bottom: 20px;
-                        font-size: 11px;
-                    }
-                    .items-table th {
-                        background: #f0f0f0;
-                        font-weight: bold;
-                        border: 1px solid #000;
-                        padding: 8px;
-                        text-align: center;
-                    }
-                    .items-table td {
-                        border: 1px solid #000;
-                        padding: 8px;
-                    }
-                    .summary-table {
-                        width: 50%;
-                        border-collapse: collapse;
-                        margin-left: auto;
-                        margin-bottom: 20px;
-                    }
-                    .summary-table td {
-                        border: 1px solid #000;
-                        padding: 8px;
-                    }
-                    .payment-table {
-                        width: 50%;
-                        border-collapse: collapse;
-                        margin-bottom: 20px;
-                    }
-                    .payment-table td {
-                        border: 1px solid #000;
-                        padding: 8px;
-                    }
-                    .amount-words {
-                        margin: 15px 0;
-                        padding: 10px;
-                        background: #f9f9f9;
-                        border-left: 3px solid #1e3c72;
-                    }
-                    .footer {
-                        margin-top: 30px;
-                        padding-top: 10px;
-                        border-top: 1px dashed #000;
-                        text-align: center;
-                        font-size: 10px;
-                    }
-                    .print-button {
-                        text-align: center;
-                        margin-bottom: 20px;
-                    }
-                    .print-button button {
-                        padding: 10px 20px;
-                        font-size: 14px;
-                        cursor: pointer;
-                        background: #17a2b8;
-                        color: white;
-                        border: none;
-                        border-radius: 5px;
-                    }
-                    @media print {
-                        .print-button {
-                            display: none;
-                        }
-                        body {
-                            padding: 0;
-                            margin: 0;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="print-button">
-                    <button onclick="window.print()">🖨️ Print This Invoice</button>
-                    <button onclick="window.close()">✖ Close</button>
-                </div>
-                
-                <div class="invoice">
-                    <div class="header">
-                        <h1>TAX INVOICE</h1>
-                        <hr>
-                    </div>
-                    
-                    <div class="customer-section">
-                        <strong>Name & address of Customer :</strong><br>
-                        ${data.customerName}<br>
-                        ${data.customerAddress}<br>
-                        <strong>State Name</strong> : ${data.state}<br>
-                        <strong>MO. NO.</strong> : ${data.mobileNo}
-                    </div>
-                    
-                    <table class="items-table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>HUID</th>
-                                <th>HSN Code</th>
-                                <th>Purity</th>
-                                <th>Gross Wt. (g)</th>
-                                <th>Net Wt. (g)</th>
-                                <th>Rate (₹)</th>
-                                <th>Value (₹)</th>
-                                <th>Labour (₹)</th>
-                                <th>Amount (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${itemsHtml}
-                            <tr style="font-weight:bold; background-color:#f9f9f9;">
-                                <td colspan="4" style="text-align:right;"><strong>TOTAL</strong></td>
-                                <td style="text-align:right;"><strong>${data.totalGrossWeight.toFixed(3)}</strong></td>
-                                <td style="text-align:right;"><strong>${data.totalNetWeight.toFixed(3)}</strong></td>
-                                <td></td>
-                                <td style="text-align:right;"><strong>${data.totalValue.toFixed(2)}</strong></td>
-                                <td style="text-align:right;"><strong>${data.totalLabour.toFixed(2)}</strong></td>
-                                <td style="text-align:right;"><strong>${(data.totalValue + data.totalLabour).toFixed(2)}</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <table class="summary-table">
-                        <tr>
-                            <td><strong>Taxable Amount</strong></td>
-                            <td style="text-align:right;">${data.taxableAmount.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Add : CGST ${data.gstRate}%</td>
-                            <td style="text-align:right;">${data.cgst.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Add : SGST ${data.gstRate}%</td>
-                            <td style="text-align:right;">${data.sgst.toFixed(2)}</td>
-                        </tr>
-                        <tr style="font-weight:bold;">
-                            <td><strong>Grand Total Amount</strong></td>
-                            <td style="text-align:right;"><strong>${data.grandTotal.toFixed(2)}</strong></td>
-                        </tr>
-                    </table>
-                    
-                    <table class="payment-table">
-                        <tr>
-                            <td><strong>Payments Adjustments :</strong></td>
-                            <td>Receipt UPI</td>
-                            <td style="text-align:right;">${data.receiptUPI.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>Receipt Cash</td>
-                            <td style="text-align:right;">${data.receiptCash.toFixed(2)}</td>
-                        </tr>
-                        <tr style="font-weight:bold;">
-                            <td></td>
-                            <td>Total Payment</td>
-                            <td style="text-align:right;">${(data.receiptUPI + data.receiptCash).toFixed(2)}</td>
-                        </tr>
-                        <tr style="font-weight:bold; background-color:#e8f5e9;">
-                            <td></td>
-                            <td>Balance Due</td>
-                            <td style="text-align:right; color:#dc3545;">${(data.grandTotal - (data.receiptUPI + data.receiptCash)).toFixed(2)}</td>
-                        </tr>
-                    </table>
-                    
-                    <div class="amount-words">
-                        <strong>Amount in Words :</strong> Rupees ${numberToWords(Math.round(data.grandTotal))} Only
-                    </div>
-                    
-                    <div style="margin-top: 15px;">
-                        <strong>Invoice No.</strong> : ${data.invoiceNo}<br>
-                        <strong>Invoice Date</strong> : ${formattedDate}
-                    </div>
-                    
-                    <div class="footer">
-                        <strong>Thank you for your business!</strong><br>
-                        This is a computer generated invoice
-                    </div>
-                </div>
-                
-                <script>
-                    // Auto trigger print dialog when window loads
-                    window.onload = function() {
-                        setTimeout(function() {
-                            window.print();
-                        }, 500);
-                    };
-                <\/script>
-            </body>
-            </html>
-        `;
-        
-        // Open new window and write the invoice
-        const printWindow = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
-        printWindow.document.write(invoiceHTML);
-        printWindow.document.close();
-    }
-
-    // Auto-update preview on input changes
-    document.addEventListener('DOMContentLoaded', function() {
-        const inputs = document.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('input', updatePreview);
-        });
-        updatePreview();
+    document.getElementById('adminToggleBtn').addEventListener('click', function () {
+      if (isAdminAuthenticated) {
+        const rc = document.getElementById('ratesCard');
+        rc.style.display = rc.style.display === 'none' ? 'block' : 'none';
+      } else showAdminModal();
     });
-</script>
+
+    // ========== GLOBAL VARIABLES ==========
+    let billItems = [];
+    let goldAdjustData = {};
+    let silverAdjustData = {};
+
+    // ========== DOM ELEMENTS ==========
+    const input18k = document.getElementById("gold18KRate"), input20k = document.getElementById("gold20KRate"), input22k = document.getElementById("gold22KRate"), input24k = document.getElementById("gold24KRate"), silverInput = document.getElementById("silverRate"), silver925Input = document.getElementById("silver925Rate");
+    const makingPercentInput = document.getElementById("makingpercentage"), makingChargeInput = document.getElementById("makingChargeInput");
+    const autoPercentHint = document.getElementById("autoPercentHint"), autoChargeHint = document.getElementById("autoChargeHint");
+    const beforeGstLabel = document.getElementById("beforeGstLabel"), afterGstItem = document.getElementById("afterGstItem");
+    let isManualMode = false, manualPercent = null, manualCharge = null, isUpdating = false;
+
+    function loadRates() { [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => 
+      { let v = localStorage.getItem(i.id); if (v) i.value = v; }); }
+
+
+     async function fetchRatesFromDB() {
+      try {
+        statusMessage.innerHTML = "⏳ Fetching rates from database...";
+        const response = await fetch(`${API_BASE}/rates`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch rates from database');
+        }
+        const data = await response.json();
+   
+
+          input18k.value = data.data.gold18KRate || '';
+        input20k.value = data.data.gold20KRate || '';
+        input22k.value = data.data.gold22KRate || '';
+        input24k.value = data.data.gold24KRate || '';
+        silverInput.value = data.data.silverRate || '';
+        silver925Input.value = data.data.silver925Rate || '';
+
+[input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => 
+      localStorage.setItem(i.id, i.value));
+      
+      document.getElementById("statusMessage").innerHTML = "✅ Rates Saved";
+      
+      
+      setTimeout(() => { if (document.getElementById("statusMessage").innerHTML === "✅ Rates Saved") document.getElementById("statusMessage").innerHTML = "Rates Loaded"; }, 2000);
+
+        statusMessage.innerHTML = "✅ Rates loaded from database & saved to local";
+        ratesLoaded = true;
+
+        setTimeout(() => {
+          if (statusMessage.innerHTML === "✅ Rates loaded from database & saved to local")
+            statusMessage.innerHTML = "Rates Loaded";
+        }, 2000);
+        return true;
+      } catch (error) {
+        console.error('Error fetching rates from database:', error);
+        statusMessage.innerHTML = "❌ Failed to fetch rates from database";
+        return false;
+      }
+    }
+
+    async function initializeRates() {
+      // Always fetch fresh rates from database on initial load
+      console.log('Fetching rates from database on initial load...');
+      await fetchRatesFromDB();}
+
+      initializeRates();
+
+    async function saveRatesToDB() {
+      try {
+        const ratesData = {
+          gold18KRate: input18k.value,
+          gold20KRate: input20k.value,
+          gold22KRate: input22k.value,
+          gold24KRate: input24k.value,
+          silverRate: silverInput.value,
+          silver925Rate: silver925Input.value
+        };
+
+        const response = await fetch(`${API_BASE}/rates`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(ratesData)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save rates to database');
+        }
+fetchRatesFromDB()
+        console.log('Rates saved to database successfully');
+        return true;
+      } catch (error) {
+        console.error('Error saving rates to database:', error);
+        return false;
+      }
+    }
+
+    loadRates(); 
+    document.getElementById("submit")?.addEventListener("click", saveRatesToDB);
+
+    const extraWeightRemoveSelect = document.getElementById('dynamicextraweightremove');
+    const stoneAmountContainer = document.getElementById('stoneAmountContainer');
+    function shouldShowStoneInput(v) { return v === 'stone-remove' || v === 'tag-stone-remove'; }
+    function updateStoneInputVisibility() { const v = extraWeightRemoveSelect.value; if (shouldShowStoneInput(v)) stoneAmountContainer.classList.remove('hidden'); else stoneAmountContainer.classList.add('hidden'); }
+    function getStoneAmount() { const inp = document.getElementById('stoneAmount'); if (inp && !stoneAmountContainer.classList.contains('hidden')) return parseFloat(inp.value) || 0; return 0; }
+    extraWeightRemoveSelect.addEventListener('change', updateStoneInputVisibility);
+    updateStoneInputVisibility();
+
+    function getMetalRatePerGram(mv) {
+      if (mv === "18") return parseFloat(input18k.value.replace(/,/g, '')) / 10;
+      if (mv === "20") return parseFloat(input20k.value.replace(/,/g, '')) / 10;
+      if (mv === "22") return parseFloat(input22k.value.replace(/,/g, '')) / 10;
+      if (mv === "24") return parseFloat(input24k.value.replace(/,/g, '')) / 10;
+      if (mv === "1") return parseFloat(silverInput.value.replace(/,/g, '')) / 1000;
+      if (mv === "92.5") return parseFloat(silver925Input.value.replace(/,/g, '')) / 1000;
+      return 0;
+    }
+    function isSilverMetal(mv) { return mv === "1" || mv === "92.5"; }
+    function getCurrentItemVariant() { return document.getElementById('dynamicItemSelect').value; }
+
+    function updateDynamicDropdown() {
+      const metalVal = document.getElementById('metal').value;
+      const isSilver = isSilverMetal(metalVal);
+      let opts = '';
+      if (isSilver) opts = '<option value="normal">Silver</option><option value="bichhiya_2ps">Bichhiya (2pcs)</option><option value="bichhiya_4ps">Bichhiya (4pcs)</option><option value="bichhiya_6ps">Bichhiya (6pcs)</option><option value="others">Others</option>';
+      else opts = '<option value="normal">Gold</option><option value="keel_nosering">Keel & Nose Ring (No GST)</option><option value="others">Others</option>';
+      let sel = document.getElementById('dynamicItemSelect');
+      if (!sel) {
+        const newSel = document.createElement('select');
+        newSel.id = 'dynamicItemSelect';
+        newSel.innerHTML = opts;
+        document.getElementById('dynamicTypeContainer').appendChild(newSel);
+        sel = newSel;
+      } else sel.innerHTML = opts;
+      sel.removeEventListener('change', recalc);
+      sel.addEventListener('change', recalc);
+    }
+    function recalc() { calculateAndUpdateUI(); }
+
+    function getAutoMakingCharge(mv, variant, weight, metalCost) {
+      if (!isSilverMetal(mv)) {
+        if (variant === 'keel_nosering') return 200;
+        if (weight >= 3) return mv === "20" ? metalCost * 0.16 : metalCost * 0.18;
+        else return weight >= 1.5 ? metalCost * 0.20 : metalCost * 0.23;
+      } else {
+        if (variant === 'bichhiya_2ps') return weight <= 5 ? 70 : 100;
+        if (variant === 'bichhiya_4ps') return weight <= 10 ? 150 : 200;
+        if (variant === 'bichhiya_6ps') return weight <= 15 ? 200 : 250;
+        return weight <= 20 ? 200 : 200 + (weight - 20) * 5;
+      }
+    }
+    function getAutoMakingPercentDisplay(mv, variant, weight) {
+      if (isSilverMetal(mv) || variant === 'keel_nosering') return 0;
+      if (weight >= 3) return mv === "20" ? 16 : 18;
+      else return weight >= 1.5 ? 20 : 23;
+    }
+    function getCurrentMetalCost() {
+      const mv = document.getElementById('metal').value;
+      let w = parseFloat(document.getElementById('weight').value) - getExtraWeightRemovalDeduction();
+      if (isNaN(w) || w <= 0) return 0;
+      return getMetalRatePerGram(mv) * w;
+    }
+    function getExtraWeightRemovalDeduction() {
+      const typ = extraWeightRemoveSelect.value;
+      const stone = getStoneAmount();
+      if (typ === 'tag-remove') return 0.060;
+      if (typ === 'stone-remove') return stone;
+      if (typ === 'tag-stone-remove') return 0.060 + stone;
+      return 0;
+    }
+    function getMakingCharge() {
+      const mc = getCurrentMetalCost();
+      if (mc <= 0) return 0;
+      if (isManualMode && manualCharge !== null) return manualCharge;
+      const mv = document.getElementById('metal').value;
+      const variant = getCurrentItemVariant();
+      let w = parseFloat(document.getElementById('weight').value) - getExtraWeightRemovalDeduction();
+      if (isNaN(w) || w <= 0) return 0;
+      return getAutoMakingCharge(mv, variant, w, mc);
+    }
+    function shouldAvoidGST() {
+      const variant = getCurrentItemVariant();
+      const mv = document.getElementById('metal').value;
+      return (!isSilverMetal(mv) && variant === 'keel_nosering');
+    }
+    function toggleGSTDisplay() {
+      if (shouldAvoidGST()) { afterGstItem.classList.add('gst-hidden'); beforeGstLabel.innerHTML = '💰 FINAL PRICE (No GST)'; }
+      else { afterGstItem.classList.remove('gst-hidden'); beforeGstLabel.innerHTML = '📦 Price BEFORE GST'; }
+    }
+    function getFullCalculation() {
+      const mv = document.getElementById('metal').value;
+      let w = parseFloat(document.getElementById('weight').value) - getExtraWeightRemovalDeduction();
+      if (isNaN(w) || w <= 0) return { metalVal: mv, weight: 0, metalCost: 0, makingCharge: 0, totalBeforeGst: 0, totalAfterGst: 0, avoidGST: false };
+      const rate = getMetalRatePerGram(mv);
+      const metalCost = rate * w;
+      const makingCharge = getMakingCharge();
+      const totalBefore = metalCost + makingCharge;
+      const avoid = shouldAvoidGST();
+      const totalAfter = avoid ? totalBefore : (Math.round(totalBefore * 1.03 / 10) * 10);
+      // const totalAfter = avoid ? totalBefore : (totalBefore * 1.03);
+      return { metalVal: mv, ratePerGram: rate, weight: w, metalCost, makingCharge, totalBeforeGst: totalBefore, totalAfterGst: totalAfter, avoidGST: avoid, variant: getCurrentItemVariant(), removalType: extraWeightRemoveSelect.value, extraDeduction: getExtraWeightRemovalDeduction() };
+    }
+    function updateAutoHints() {
+      const mv = document.getElementById('metal').value;
+      const variant = getCurrentItemVariant();
+      let w = parseFloat(document.getElementById('weight').value) - getExtraWeightRemovalDeduction();
+      if (isNaN(w) || w <= 0) { autoPercentHint.innerText = 'Auto: --%'; autoChargeHint.innerText = 'Auto: ₹--'; return; }
+      const mc = getCurrentMetalCost();
+      if (!isSilverMetal(mv) && variant !== 'keel_nosering') autoPercentHint.innerText = getAutoMakingPercentDisplay(mv, variant, w) + '%';
+      else autoPercentHint.innerText = 'Flat Rate';
+      autoChargeHint.innerText = '₹' + getAutoMakingCharge(mv, variant, w, mc).toFixed(2);
+    }
+    function handleManualPercentChange() {
+      if (isUpdating) return;
+      isUpdating = true;
+      const v = makingPercentInput.value.trim();
+      if (v === '') { isManualMode = false; manualPercent = null; manualCharge = null; }
+      else { let p = parseFloat(v); if (!isNaN(p) && p >= 0) { isManualMode = true; manualPercent = p; let mc = getCurrentMetalCost(); if (mc > 0) { manualCharge = mc * (p / 100); makingChargeInput.value = manualCharge.toFixed(2); } } else { isManualMode = false; } }
+      calculateAndUpdateUI();
+      isUpdating = false;
+    }
+    function handleManualChargeChange() {
+      if (isUpdating) return;
+      isUpdating = true;
+      const v = makingChargeInput.value.trim();
+      if (v === '') { isManualMode = false; manualPercent = null; manualCharge = null; }
+      else { let c = parseFloat(v); if (!isNaN(c) && c >= 0) { isManualMode = true; manualCharge = c; let mc = getCurrentMetalCost(); if (mc > 0) { manualPercent = (c / mc) * 100; makingPercentInput.value = manualPercent.toFixed(2); } } else { isManualMode = false; } }
+      calculateAndUpdateUI();
+      isUpdating = false;
+    }
+    function resetEstimatorKeepMetal() {
+      document.getElementById('weight').value = '0';
+      extraWeightRemoveSelect.value = 'default';
+      updateStoneInputVisibility();
+      const si = document.getElementById('stoneAmount'); if (si) si.value = '0';
+      isManualMode = false; manualPercent = null; manualCharge = null;
+      makingPercentInput.value = ''; makingChargeInput.value = '';
+      calculateAndUpdateUI();
+    }
+    function calculateAndUpdateUI() {
+      updateAutoHints(); toggleGSTDisplay();
+      const c = getFullCalculation();
+      document.getElementById('metalValueDisplay').innerText = '₹ ' + c.metalCost.toFixed(2);
+      document.getElementById('result_before_gst').innerHTML = '₹ ' + c.totalBeforeGst.toFixed(2);
+      document.getElementById('result_after_gst').innerHTML = '₹ ' + c.totalAfterGst.toFixed(2);
+      if (!isUpdating) {
+        isUpdating = true;
+        if (isManualMode && manualPercent !== null) makingPercentInput.value = manualPercent.toFixed(2);
+        else makingPercentInput.value = '';
+        if (isManualMode && manualCharge !== null) makingChargeInput.value = manualCharge.toFixed(2);
+        else makingChargeInput.value = '';
+        isUpdating = false;
+      }
+      return c;
+    }
+
+    function setupFocusManagement() {
+      const focusableElements = [document.getElementById('metal'), document.getElementById('dynamicItemSelect'), document.getElementById('dynamicextraweightremove'), document.getElementById('stoneAmount'), document.getElementById('weight'), document.getElementById('addBtn'), document.getElementById('makingpercentage'), document.getElementById('makingChargeInput')].filter(el => el !== null);
+      for (let i = 0; i < focusableElements.length; i++) {
+        focusableElements[i].addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            let nextIndex = i + 1;
+            while (nextIndex < focusableElements.length && focusableElements[nextIndex].offsetParent === null) nextIndex++;
+            if (nextIndex < focusableElements.length) focusableElements[nextIndex].focus();
+            else focusableElements[0].focus();
+          }
+        });
+      }
+      const addBtn = document.getElementById('addBtn');
+      addBtn.addEventListener('click', function (e) { addToBillList(e); document.getElementById('weight').focus(); });
+      addBtn.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addToBillList(e); document.getElementById('weight').focus(); } });
+    }
+
+    function getMetalDisplayName(mv) { const map = { "18": "18K Gold", "20": "20K Gold", "22": "22K Gold", "24": "24K Gold", "1": "Pure Silver", "92.5": "925 Silver" }; return map[mv] || mv; }
+    function getVariantDisplay(mv, vc) {
+      const isSilver = isSilverMetal(mv);
+      if (isSilver) { const m = { normal: "Silver", bichhiya_2ps: "Bichhiya (2pcs)", bichhiya_4ps: "Bichhiya (4pcs)", bichhiya_6ps: "Bichhiya (6pcs)", others: "Silver Custom" }; return m[vc] || "Silver Item"; }
+      else { const m = { normal: "Gold", keel_nosering: "Keel & Nose Ring (No GST)", others: "Gold Special" }; return m[vc] || "Gold Item"; }
+    }
+    function addToBillList(e) {
+      const c = getFullCalculation();
+      if (c.weight <= 0) { alert("Enter valid weight (>0)"); return false; }
+      if (c.ratePerGram === 0) { alert("Metal rate not configured"); return false; }
+      let removalText = '';
+      if (c.removalType === 'tag-remove') removalText = ' (Tag Removed)';
+      else if (c.removalType === 'stone-remove') removalText = ' (Stone: ₹' + c.extraDeduction + ')';
+      else if (c.removalType === 'tag-stone-remove') removalText = ' (Tag+Stone: ₹' + c.extraDeduction + ')';
+      let makingDisplay = (!isSilverMetal(c.metalVal) && c.variant !== 'keel_nosering') ? (c.makingCharge / c.metalCost * 100).toFixed(1) + '% (₹' + c.makingCharge.toFixed(2) + ')' : 'Flat ₹' + c.makingCharge.toFixed(2);
+      const newItem = { id: Date.now(), metalName: getMetalDisplayName(c.metalVal), weight: c.weight, itemType: getVariantDisplay(c.metalVal, c.variant) + removalText, totalBeforeGst: c.totalBeforeGst, finalPrice: c.totalAfterGst, makingDisplay, makingCharge: c.makingCharge, rate: c.ratePerGram.toFixed(2), noGST: c.avoidGST, itemValue: c.metalCost, originalMakingCharge: c.makingCharge, originalFinalPrice: c.totalAfterGst, isSilver: isSilverMetal(c.metalVal) };
+      billItems.push(newItem);
+      renderAllTables();
+      resetEstimatorKeepMetal();
+      document.getElementById('weight').focus();
+      return true;
+    }
+    function removeBillItem(id) { billItems = billItems.filter(i => i.id !== id); delete goldAdjustData[id]; delete silverAdjustData[id]; renderAllTables(); }
+    function clearAllItems() { if (confirm("Clear all items?")) { billItems = []; goldAdjustData = {}; silverAdjustData = {}; renderAllTables(); } }
+    
+    function computeTotals() { 
+      let goldTotal = 0, silverTotal = 0; 
+      billItems.forEach(it => { 
+        let finalVal = (it.isSilver ? silverAdjustData[it.id]?.newFinal : goldAdjustData[it.id]?.newFinal) ?? it.finalPrice; 
+        if (it.isSilver) silverTotal += finalVal; 
+        else goldTotal += finalVal; 
+      }); 
+      return { goldTotal, silverTotal, grandTotal: goldTotal + silverTotal }; 
+    }
+    
+    function updateSummaryPanel() { 
+      let { goldTotal, silverTotal, grandTotal } = computeTotals(); 
+      document.getElementById("summaryGoldTotal").innerHTML = "₹ " + goldTotal.toFixed(2); 
+      document.getElementById("summarySilverTotal").innerHTML = "₹ " + silverTotal.toFixed(2); 
+      document.getElementById("summaryBillGrandTotal").innerHTML = "₹ " + grandTotal.toFixed(2); 
+      document.getElementById("grandTotalDisplay").innerHTML = `💰 Grand Total (incl. GST): ₹ ${grandTotal.toFixed(2)}`; 
+      let manualInput = document.getElementById("manualBillTotalInput"); 
+      if (manualInput && !manualInput._syncing) manualInput.value = grandTotal.toFixed(2); 
+    }
+    
+    function applyBillTotalToGoldOnly(newTotalBill) { 
+      let { goldTotal, silverTotal } = computeTotals(); 
+      let targetGoldTotal = newTotalBill - silverTotal; 
+      if (targetGoldTotal < 0) { alert("Cannot be less than silver total"); return false; } 
+      let goldItems = billItems.filter(i => !i.isSilver); 
+      if (!goldItems.length) { alert("No gold items"); return false; } 
+      let totalOrigMaking = goldItems.reduce((s, i) => s + i.originalMakingCharge, 0); 
+      if (totalOrigMaking === 0) { alert("Making zero"); return false; } 
+      let totalMetal = goldItems.reduce((s, i) => s + i.itemValue, 0); 
+      let hasGst = goldItems.some(i => !i.noGST); 
+      let targetBefore = hasGst ? targetGoldTotal / 1.03 : targetGoldTotal; 
+      let neededMaking = targetBefore - totalMetal; 
+      if (neededMaking < 0) { alert("Target below metal value"); return false; } 
+      goldItems.forEach(item => { 
+        let prop = item.originalMakingCharge / totalOrigMaking; 
+        let newMaking = neededMaking * prop; 
+        let newFinal = item.noGST ? item.itemValue + newMaking : Math.round(((item.itemValue + newMaking) * 1.03) / 10) * 10; 
+        goldAdjustData[item.id] = { desiredFinal: newFinal, newMaking, newFinal }; 
+      }); 
+      renderAllTables(); 
+      return true; 
+    }
+    
+    function resetBillToOriginal() { goldAdjustData = {}; silverAdjustData = {}; renderAllTables(); alert("Reset to original"); }
+
+    // ========== GOLD ADJUSTMENT TABLE WITH BLACK TOTAL ROW ==========
+    function renderGoldAdjustTable() {
+      let golds = billItems.filter(i => !i.isSilver);
+      let container = document.getElementById("goldAdjustContainer");
+      if (golds.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:2rem;">✨ Add gold items</div>';
+        document.getElementById("goldAdjustedTotal").innerHTML = "💰 Adjusted Gold Total: ₹ 0.00";
+        return;
+      }
+      let tmv = 0, tw = 0, tm = 0, tv = 0;
+      let totalAdj = 0;
+      let html = '<table class="adjustment-table"><thead><tr><th>Item</th><th>Metal Value</th><th>Wt(g)</th><th>Original Making</th><th>New Making</th><th>New Final</th><th>Update Final Value</th></tr></thead><tbody>';
+      
+      golds.forEach(item => {
+        let adj = goldAdjustData[item.id] || { desiredFinal: item.finalPrice, newMaking: item.makingCharge, newFinal: item.finalPrice };
+        tmv += item.itemValue; tw += item.weight; tm += adj.newMaking; tv += adj.newFinal;
+        totalAdj += adj.newFinal;
+        html += `<tr>
+          <td>${item.metalName}<br><span style="font-size:0.6rem;">₹${item.rate}/g</span></td>
+          <td>₹${item.itemValue.toFixed(2)}</span></span></span></span></span></span></span></span></td>
+          <td>${item.weight.toFixed(2)}g</span></span></span></span></span></span></span></span></td>
+          <td>₹${item.originalMakingCharge.toFixed(2)}</span></span></span></span></span></span></span></span></td>
+          <td><span id="gold-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:600;">₹${adj.newMaking.toFixed(2)}</span></td>
+          <td><span id="gold-newfinal-${item.id}" style="font-weight:700;color:#c0392b;">₹${adj.newFinal.toFixed(2)}</span></td>
+          <td><input type="number" id="gold-desired-${item.id}" class="adjustment-input" value="${adj.desiredFinal}" step="any"></td>
+        </tr>`;
+      });
+
+      // BLACK BACKGROUND TOTAL ROW
+      html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:0.9rem;">
+        <td><strong style="color:#ffffff;">TOTAL</strong></td>
+        <td><strong style="color:#f5b042;">₹${tmv.toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
+        <td><strong style="color:#f5b042;">₹${golds.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+      </tr></tfoot></tbody></tr>`;
+      
+      container.innerHTML = html;
+      document.getElementById("goldAdjustedTotal").innerHTML = `💰 Adjusted Gold Total: ₹ ${totalAdj.toFixed(2)}`;
+      
+      golds.forEach(item => {
+        let inp = document.getElementById(`gold-desired-${item.id}`);
+        if (inp) inp.onchange = (e) => { let val = parseFloat(e.target.value); if (!isNaN(val) && val > 0) updateGoldAdjustment(item.id, val); };
+      });
+    }
+
+    function updateGoldAdjustment(id, desired) { 
+      let item = billItems.find(i => i.id === id); 
+      if (!item || item.isSilver) return; 
+      let finalDesired = Math.max(desired, item.itemValue); 
+      let newMaking, newFinal; 
+      if (item.noGST) { newMaking = finalDesired - item.itemValue; if (newMaking < 0) newMaking = 0; newFinal = item.itemValue + newMaking; } 
+      else { let before = finalDesired / 1.03; newMaking = before - item.itemValue; if (newMaking < 0) newMaking = 0; newFinal = Math.round(((item.itemValue + newMaking) * 1.03) / 10) * 10; } 
+      goldAdjustData[id] = { desiredFinal: finalDesired, newMaking, newFinal }; 
+      renderGoldAdjustTable(); updateSummaryPanel(); 
+    }
+    
+    function applyGoldGrandTotal() { 
+      let golds = billItems.filter(i => !i.isSilver); 
+      if (!golds.length) return; 
+      let target = parseFloat(document.getElementById("goldGrandTotalInput").value); 
+      if (isNaN(target)) return; 
+      let curGold = golds.reduce((s, i) => s + (goldAdjustData[i.id]?.newFinal ?? i.finalPrice), 0); 
+      if (Math.abs(target - curGold) < 0.01) return; 
+      let totalOrigMaking = golds.reduce((s, i) => s + i.originalMakingCharge, 0); 
+      if (totalOrigMaking === 0) return; 
+      let totalMetal = golds.reduce((s, i) => s + i.itemValue, 0); 
+      let hasGst = golds.some(i => !i.noGST); 
+      let targetBefore = hasGst ? target / 1.03 : target; 
+      let neededMaking = targetBefore - totalMetal; 
+      if (neededMaking < 0) return; 
+      golds.forEach(item => { 
+        let prop = item.originalMakingCharge / totalOrigMaking; 
+        let newMaking = neededMaking * prop; 
+        let newFinal = item.noGST ? item.itemValue + newMaking : Math.round(((item.itemValue + newMaking) * 1.03) / 10) * 10; 
+        goldAdjustData[item.id] = { desiredFinal: newFinal, newMaking, newFinal }; 
+      }); 
+      renderGoldAdjustTable(); updateSummaryPanel(); alert("Gold total adjusted"); 
+    }
+    
+    function resetGoldAdjustments() { goldAdjustData = {}; renderGoldAdjustTable(); updateSummaryPanel(); document.getElementById("goldGrandTotalInput").value = 0; }
+
+    // ========== SILVER ADJUSTMENT TABLE WITH BLACK TOTAL ROW ==========
+    function renderSilverAdjustTable() { 
+      let silvers = billItems.filter(i => i.isSilver); 
+      let container = document.getElementById("silverAdjustContainer"); 
+      if (silvers.length === 0) { 
+        container.innerHTML = '<div style="text-align:center; padding:2rem;">✨ Add silver items</div>'; 
+        document.getElementById("silverAdjustedTotal").innerHTML = "💰 Adjusted Silver Total: ₹ 0.00"; 
+        return; 
+      } 
+      let tmv = 0, tw = 0, tm = 0, tv = 0;
+      let totalAdj = 0; 
+      let html = '<table class="adjustment-table"><thead><tr><th>Item</th><th>Metal Value</th><th>Wt(g)</th><th>Original Making</th><th>New Making</th><th>New Final</th><th>Update Final Value</th></tr></thead><tbody>';
+      
+      silvers.forEach(item => { 
+        let adj = silverAdjustData[item.id] || { desiredFinal: item.finalPrice, newMaking: item.makingCharge, newFinal: item.finalPrice }; 
+        tmv += item.itemValue; tw += item.weight; tm += adj.newMaking; tv += adj.newFinal;
+        totalAdj += adj.newFinal; 
+        html += `<tr>
+          <td>${item.metalName}<br><span style="font-size:0.6rem;">₹${item.rate}/g</span></td>
+          <td>₹${item.itemValue.toFixed(2)}</span></span></span></span></span></span></span></span></td>
+          <td>${item.weight.toFixed(2)}g</span></span></span></span></span></span></span></span></td>
+          <td>₹${item.originalMakingCharge.toFixed(2)}</span></span></span></span></span></span></span></span></td>
+          <td><span id="silver-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:600;">₹${adj.newMaking.toFixed(2)}</span></td>
+          <td><span id="silver-newfinal-${item.id}" style="font-weight:700;color:#c0392b;">₹${adj.newFinal.toFixed(2)}</span></td>
+          <td><input type="number" id="silver-desired-${item.id}" class="adjustment-input" value="${adj.desiredFinal}" step="any"></td>
+        </tr>`;
+      }); 
+
+      // BLACK BACKGROUND TOTAL ROW
+      html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:0.9rem;">
+        <td><strong style="color:#ffffff;">TOTAL</strong></td>
+        <td><strong style="color:#f5b042;">₹${tmv.toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
+        <td><strong style="color:#f5b042;">₹${silvers.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+      </tr></tfoot></tbody></table>`;
+
+      container.innerHTML = html; 
+      document.getElementById("silverAdjustedTotal").innerHTML = `💰 Adjusted Silver Total: ₹ ${totalAdj.toFixed(2)}`; 
+      silvers.forEach(item => { 
+        let inp = document.getElementById(`silver-desired-${item.id}`); 
+        if (inp) inp.onchange = (e) => { let val = parseFloat(e.target.value); if (!isNaN(val) && val > 0) updateSilverAdjustment(item.id, val); }; 
+      }); 
+    }
+    
+    function updateSilverAdjustment(id, desired) { 
+      let item = billItems.find(i => i.id === id); 
+      if (!item || !item.isSilver) return; 
+      let finalDesired = Math.max(desired, item.itemValue); 
+      let newMaking, newFinal; 
+      if (item.noGST) { newMaking = finalDesired - item.itemValue; if (newMaking < 0) newMaking = 0; newFinal = item.itemValue + newMaking; } 
+      else { let before = finalDesired / 1.03; newMaking = before - item.itemValue; if (newMaking < 0) newMaking = 0; newFinal = Math.round(((item.itemValue + newMaking) * 1.03) / 10) * 10; } 
+      silverAdjustData[id] = { desiredFinal: finalDesired, newMaking, newFinal }; 
+      renderSilverAdjustTable(); updateSummaryPanel(); 
+    }
+    
+    function applySilverGrandTotal() { 
+      let silvers = billItems.filter(i => i.isSilver); 
+      if (!silvers.length) return; 
+      let target = parseFloat(document.getElementById("silverGrandTotalInput").value); 
+      if (isNaN(target)) return; 
+      let curSilver = silvers.reduce((s, i) => s + (silverAdjustData[i.id]?.newFinal ?? i.finalPrice), 0); 
+      if (Math.abs(target - curSilver) < 0.01) return; 
+      let totalOrigMaking = silvers.reduce((s, i) => s + i.originalMakingCharge, 0); 
+      if (totalOrigMaking === 0) return; 
+      let totalMetal = silvers.reduce((s, i) => s + i.itemValue, 0); 
+      let hasGst = silvers.some(i => !i.noGST); 
+      let targetBefore = hasGst ? target / 1.03 : target; 
+      let neededMaking = targetBefore - totalMetal; 
+      if (neededMaking < 0) return; 
+      silvers.forEach(item => { 
+        let prop = item.originalMakingCharge / totalOrigMaking; 
+        let newMaking = neededMaking * prop; 
+        let newFinal = item.noGST ? item.itemValue + newMaking : Math.round(((item.itemValue + newMaking) * 1.03) / 10) * 10; 
+        silverAdjustData[item.id] = { desiredFinal: newFinal, newMaking, newFinal }; 
+      }); 
+      renderSilverAdjustTable(); updateSummaryPanel(); alert("Silver total adjusted"); 
+    }
+    
+    function resetSilverAdjustments() { silverAdjustData = {}; renderSilverAdjustTable(); updateSummaryPanel(); document.getElementById("silverGrandTotalInput").value = 0; }
+     
+    // ========== BILL REGISTER TABLE WITH BLACK TOTAL ROW ==========
+    function renderBillList() { 
+      let container = document.getElementById("billContainer"); 
+      if (billItems.length === 0) { 
+        container.innerHTML = '<div style="text-align:center; padding:2rem;">✨ No items added.</div>'; 
+        updateSummaryPanel(); 
+        return; 
+      } 
+      let tw = 0, tm = 0, tb = 0, ta = 0;
+      let html = '<table class="bill-table"><thead><tr><th>Metal</th><th>Item Type</th><th>Making</th><th>Wt(g)</th><th>Before GST</th><th>Final Amount</th><th></th></tr></thead><tbody>'; 
+      
+      billItems.forEach(it => { 
+        let finalPrice = (it.isSilver ? silverAdjustData[it.id]?.newFinal : goldAdjustData[it.id]?.newFinal) ?? it.finalPrice;
+        let makingChargeAdjusted = (it.isSilver ? silverAdjustData[it.id]?.newMaking : goldAdjustData[it.id]?.newMaking) ?? it.makingCharge;
+        let makingDisplay = it.makingDisplay;
+        
+        tw += it.weight; 
+        tm += makingChargeAdjusted; 
+        tb += it.totalBeforeGst; 
+        ta += finalPrice;
+
+        if ((it.isSilver && silverAdjustData[it.id]) || (!it.isSilver && goldAdjustData[it.id])) makingDisplay = "Adjusted"; 
+        html += `<tr>
+          <td style="font-weight:500;">${it.metalName}</td>
+          <td style="font-weight:500;">${it.itemType}<br><span style="font-size:0.6rem;">rate: ₹${it.rate}/g</span></td>
+          <td style="font-weight:500;">${makingDisplay}</td>
+          <td style="font-weight:900; color:red; font-size:0.9rem;">${it.weight.toFixed(2)} g</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+          <td style="font-weight:500; font-size:0.9rem;">₹${it.totalBeforeGst.toFixed(2)}</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+          <td style="font-weight:700; color:green; font-size:0.9rem;">₹${finalPrice.toFixed(2)}</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+          <td><button class="delete-item" onclick="removeBillItem(${it.id})">✖</button></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        </tr>`;
+      });
+      
+      // BLACK BACKGROUND TOTAL ROW
+      html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:1rem;">
+        <td colspan="2"><strong style="color:#ffffff;">TOTAL</strong></td>
+        <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
+        <td><strong style="color:#f5b042;">₹${tb.toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">₹${ta.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+      </tr></tfoot></tbody></table>`;
+      
+      container.innerHTML = html; 
+      updateSummaryPanel(); 
+    }
+   
+    function renderAllTables() { renderBillList(); renderGoldAdjustTable(); renderSilverAdjustTable(); updateSummaryPanel(); }
+    window.removeBillItem = removeBillItem;
+
+    document.getElementById('clearAllBtn').addEventListener('click', clearAllItems);
+    document.getElementById('resetGoldAdjustBtn').addEventListener('click', resetGoldAdjustments);
+    document.getElementById('applyGoldTotalBtn').addEventListener('click', applyGoldGrandTotal);
+    document.getElementById('resetSilverAdjustBtn').addEventListener('click', resetSilverAdjustments);
+    document.getElementById('applySilverTotalBtn').addEventListener('click', applySilverGrandTotal);
+    document.getElementById('viewGoldBtn').addEventListener('click', () => document.getElementById('goldAdjustContainer').classList.toggle('visible'));
+    document.getElementById('viewSilverBtn').addEventListener('click', () => document.getElementById('silverAdjustContainer').classList.toggle('visible'));
+    document.getElementById('applyBillTotalBtn').onclick = () => { let val = parseFloat(document.getElementById("manualBillTotalInput").value); if (!isNaN(val) && val >= 0) applyBillTotalToGoldOnly(val); else alert("Enter valid amount"); };
+    document.getElementById('resetBillTotalBtn').onclick = resetBillToOriginal;
+    document.getElementById("metal").addEventListener("change", () => { updateDynamicDropdown(); calculateAndUpdateUI(); });
+    document.getElementById("weight").addEventListener("input", calculateAndUpdateUI);
+    document.getElementById("dynamicextraweightremove").addEventListener("change", () => { updateStoneInputVisibility(); calculateAndUpdateUI(); });
+    document.getElementById("makingpercentage").addEventListener("input", handleManualPercentChange);
+    document.getElementById("makingChargeInput").addEventListener("input", handleManualChargeChange);
+
+    updateDynamicDropdown();
+    setupFocusManagement();
+    calculateAndUpdateUI();
+    renderAllTables();
+
+    const ratesHeader = document.getElementById('ratesHeader');
+    const ratesContent = document.getElementById('ratesContent');
+    if (ratesHeader && ratesContent) {
+      ratesContent.style.maxHeight = '0px';
+      ratesContent.classList.add('collapsed');
+      ratesHeader.classList.add('collapsed');
+      ratesHeader.addEventListener('click', function () {
+        if (ratesContent.classList.contains('collapsed')) {
+          ratesContent.style.maxHeight = ratesContent.scrollHeight + 'px';
+          ratesContent.classList.remove('collapsed');
+          ratesHeader.classList.remove('collapsed');
+        } else {
+          ratesContent.style.maxHeight = '0px';
+          ratesContent.classList.add('collapsed');
+          ratesHeader.classList.add('collapsed');
+        }
+      });
+    }
+  </script>
 </body>
+
 </html>
