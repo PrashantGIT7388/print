@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
   <title>BWJ Jewellery Manager | Smart Bill Total Control</title>
   <style>
-    /* ... [your existing styles - keep them unchanged] ... */
-    /* I'll keep the styles section same as your original */
     * {
       margin: 0;
       padding: 0;
@@ -623,9 +621,10 @@
       .admin-toggle { padding: 5px 12px; font-size: 0.7rem; }
       .estimator-card, .bill-card, .adjustment-card { padding: 16px; margin-bottom: 16px; border-radius: 20px; }
       .estimator-header h3, .bill-header h3 { font-size: 1.1rem; }
+      /* .horizontal-fields { flex-direction: column; gap: 10px; } */
       .horizontal-fields {
        display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr; /* Creates 2 equal columns */
         gap: 15pxx;
 }
       .horizontal-fields .field-group:nth-child(3) {
@@ -633,6 +632,10 @@
     }
       .field-group { min-width: 100%; width: 100%; }
       .btn-add { width: 100%; text-align: center; justify-content: center; }
+      /* .price-cards { flex-direction: column; gap: 8px; }
+      .price-item:first-child {
+      display: none;
+    } */
         .price-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -784,9 +787,7 @@
   <script>
     // ========== ADMIN AUTHENTICATION ==========
 
-    // 🔧 FIX 1: Use HTTPS and handle CORS
-    const API_BASE = 'https://bwjbackend.onrender.com/api';
-    
+  const API_BASE = 'https://bwjbackend.onrender.com/api';
     let isAdminAuthenticated = false;
     const ADMIN_PASSWORD = "00..";
 
@@ -822,96 +823,45 @@
     let billItems = [];
     let goldAdjustData = {};
     let silverAdjustData = {};
-    const statusMessage = document.getElementById("statusMessage");
 
     // ========== DOM ELEMENTS ==========
-    const input18k = document.getElementById("gold18KRate"), 
-          input20k = document.getElementById("gold20KRate"), 
-          input22k = document.getElementById("gold22KRate"), 
-          input24k = document.getElementById("gold24KRate"), 
-          silverInput = document.getElementById("silverRate"), 
-          silver925Input = document.getElementById("silver925Rate");
-    const makingPercentInput = document.getElementById("makingpercentage"), 
-          makingChargeInput = document.getElementById("makingChargeInput");
-    const autoPercentHint = document.getElementById("autoPercentHint"), 
-          autoChargeHint = document.getElementById("autoChargeHint");
-    const beforeGstLabel = document.getElementById("beforeGstLabel"), 
-          afterGstItem = document.getElementById("afterGstItem");
-    let isManualMode = false, 
-        manualPercent = null, 
-        manualCharge = null, 
-        isUpdating = false;
+    const input18k = document.getElementById("gold18KRate"), input20k = document.getElementById("gold20KRate"), input22k = document.getElementById("gold22KRate"), input24k = document.getElementById("gold24KRate"), silverInput = document.getElementById("silverRate"), silver925Input = document.getElementById("silver925Rate");
+    const makingPercentInput = document.getElementById("makingpercentage"), makingChargeInput = document.getElementById("makingChargeInput");
+    const autoPercentHint = document.getElementById("autoPercentHint"), autoChargeHint = document.getElementById("autoChargeHint");
+    const beforeGstLabel = document.getElementById("beforeGstLabel"), afterGstItem = document.getElementById("afterGstItem");
+    let isManualMode = false, manualPercent = null, manualCharge = null, isUpdating = false;
 
-    // ========== LOAD RATES FROM LOCALSTORAGE ==========
-    function loadRates() { 
-      [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => { 
-        let v = localStorage.getItem(i.id); 
-        if (v) i.value = v; 
-      }); 
-    }
+    function loadRates() { [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => 
+      { let v = localStorage.getItem(i.id); if (v) i.value = v; }); }
 
-    // ========== 🔧 FIX 2: FETCH RATES WITH MULTIPLE FALLBACKS ==========
-    async function fetchRatesFromDB() {
+
+     async function fetchRatesFromDB() {
       try {
         statusMessage.innerHTML = "⏳ Fetching rates from database...";
-        
-        // Try multiple endpoints
-        const endpoints = [
-          `${API_BASE}/rates`,
-          `https://cors-anywhere.herokuapp.com/${API_BASE}/rates`,
-          `${API_BASE}/rates` // fallback
-        ];
-
-        let response = null;
-        let data = null;
-
-        // Try each endpoint
-        for (const endpoint of endpoints) {
-          try {
-            response = await fetch(endpoint, {
-              method: 'GET',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-              mode: 'cors'
-            });
-            
-            if (response.ok) {
-              data = await response.json();
-              console.log('Successfully fetched from:', endpoint);
-              break;
-            }
-          } catch (e) {
-            console.log(`Failed to fetch from ${endpoint}:`, e.message);
-            continue;
-          }
+        const response = await fetch(`${API_BASE}/rates`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch rates from database');
         }
+        const data = await response.json();
+   
 
-        if (!data) {
-          throw new Error('All endpoints failed');
-        }
+          input18k.value = data.data.gold18KRate || '';
+        input20k.value = data.data.gold20KRate || '';
+        input22k.value = data.data.gold22KRate || '';
+        input24k.value = data.data.gold24KRate || '';
+        silverInput.value = data.data.silverRate || '';
+        silver925Input.value = data.data.silver925Rate || '';
 
-        console.log('Fetched rates from database:', data);
+[input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => 
+      localStorage.setItem(i.id, i.value));
+      
+      document.getElementById("statusMessage").innerHTML = "✅ Rates Saved";
+      
+      
+      setTimeout(() => { if (document.getElementById("statusMessage").innerHTML === "✅ Rates Saved") document.getElementById("statusMessage").innerHTML = "Rates Loaded"; }, 2000);
 
-        // Handle both nested and flat data structures
-        const rates = data.data || data;
-        
-        input18k.value = rates.gold18KRate || '';
-        input20k.value = rates.gold20KRate || '';
-        input22k.value = rates.gold22KRate || '';
-        input24k.value = rates.gold24KRate || '';
-        silverInput.value = rates.silverRate || '';
-        silver925Input.value = rates.silver925Rate || '';
-
-        // Save to localStorage (only non-empty values)
-        [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => {
-          if (i.value && i.value !== '') {
-            localStorage.setItem(i.id, i.value);
-          }
-        });
-        
         statusMessage.innerHTML = "✅ Rates loaded from database & saved to local";
+        ratesLoaded = true;
 
         setTimeout(() => {
           if (statusMessage.innerHTML === "✅ Rates loaded from database & saved to local")
@@ -921,57 +871,19 @@
       } catch (error) {
         console.error('Error fetching rates from database:', error);
         statusMessage.innerHTML = "❌ Failed to fetch rates from database";
-        
-        // 🔧 FIX 3: FALLBACK TO LOCALSTORAGE
-        loadRates();
-        const hasRates = [input18k, input20k, input22k, input24k, silverInput, silver925Input].some(i => i.value && i.value !== '');
-        if (hasRates) {
-          statusMessage.innerHTML = "⚠️ Using local rates (DB unavailable)";
-          calculateAndUpdateUI(); // Update UI with local rates
-        } else {
-          // If no rates exist, set default values
-          const defaultRates = {
-            gold18KRate: '50000',
-            gold20KRate: '55000',
-            gold22KRate: '60000',
-            gold24KRate: '65000',
-            silverRate: '75000',
-            silver925Rate: '70000'
-          };
-          
-          input18k.value = defaultRates.gold18KRate;
-          input20k.value = defaultRates.gold20KRate;
-          input22k.value = defaultRates.gold22KRate;
-          input24k.value = defaultRates.gold24KRate;
-          silverInput.value = defaultRates.silverRate;
-          silver925Input.value = defaultRates.silver925Rate;
-          
-          // Save defaults to localStorage
-          [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => {
-            localStorage.setItem(i.id, i.value);
-          });
-          
-          statusMessage.innerHTML = "⚠️ Using default rates (no saved rates found)";
-          calculateAndUpdateUI();
-        }
         return false;
       }
     }
 
-    // ========== INITIALIZE RATES ==========
     async function initializeRates() {
+      // Always fetch fresh rates from database on initial load
       console.log('Fetching rates from database on initial load...');
-      await fetchRatesFromDB();
-    }
+      await fetchRatesFromDB();}
 
-    // Initialize on load
-    initializeRates();
+      initializeRates();
 
-    // ========== SAVE RATES TO DATABASE ==========
     async function saveRatesToDB() {
       try {
-        statusMessage.innerHTML = "⏳ Saving rates to database...";
-        
         const ratesData = {
           gold18KRate: input18k.value,
           gold20KRate: input20k.value,
@@ -981,12 +893,10 @@
           silver925Rate: silver925Input.value
         };
 
-        // Try to save with fetch
         const response = await fetch(`${API_BASE}/rates`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(ratesData)
         });
@@ -994,69 +904,17 @@
         if (!response.ok) {
           throw new Error('Failed to save rates to database');
         }
-
-        // Save to localStorage
-        [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => {
-          if (i.value && i.value !== '') {
-            localStorage.setItem(i.id, i.value);
-          }
-        });
-
-        statusMessage.innerHTML = "✅ Rates saved to database & localStorage";
-        
-        setTimeout(() => {
-          if (statusMessage.innerHTML === "✅ Rates saved to database & localStorage")
-            statusMessage.innerHTML = "Rates Loaded";
-        }, 2000);
-        
-        // Refresh rates from DB to confirm
-        await fetchRatesFromDB();
-        
+fetchRatesFromDB()
         console.log('Rates saved to database successfully');
         return true;
       } catch (error) {
         console.error('Error saving rates to database:', error);
-        statusMessage.innerHTML = "❌ Failed to save to database, but saved locally";
-        
-        // Still save to localStorage even if DB fails
-        [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => {
-          if (i.value && i.value !== '') {
-            localStorage.setItem(i.id, i.value);
-          }
-        });
-        
         return false;
       }
     }
 
-    // ========== LOAD RATES AND SETUP EVENT LISTENERS ==========
-    // Load any existing rates from localStorage first
-    loadRates();
-    
-    // Update button handler
+    loadRates(); 
     document.getElementById("submit")?.addEventListener("click", saveRatesToDB);
-
-    // Enter key on rate inputs
-    document.querySelectorAll('.input-row input').forEach(input => {
-      input.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          saveRatesToDB();
-        }
-      });
-    });
-
-    // ========== THE REST OF YOUR APPLICATION CODE ==========
-    // ... [all your existing functions remain exactly the same]
-    // I'm keeping them unchanged since they work fine
-
-    // Just make sure calculateAndUpdateUI is defined before any calls
-    // (Your existing code already has this, so I won't repeat it all here)
-    
-    // The rest of your JavaScript continues here...
-    // (extraWeightRemoveSelect, getMetalRatePerGram, etc.)
-    
-    // I'll include the minimal required functions to make it work,
-    // but you should keep all your existing code below this line.
 
     const extraWeightRemoveSelect = document.getElementById('dynamicextraweightremove');
     const stoneAmountContainer = document.getElementById('stoneAmountContainer');
@@ -1157,6 +1015,7 @@
       const totalBefore = metalCost + makingCharge;
       const avoid = shouldAvoidGST();
       const totalAfter = avoid ? totalBefore : (Math.round(totalBefore * 1.03 / 10) * 10);
+      // const totalAfter = avoid ? totalBefore : (totalBefore * 1.03);
       return { metalVal: mv, ratePerGram: rate, weight: w, metalCost, makingCharge, totalBeforeGst: totalBefore, totalAfterGst: totalAfter, avoidGST: avoid, variant: getCurrentItemVariant(), removalType: extraWeightRemoveSelect.value, extraDeduction: getExtraWeightRemovalDeduction() };
     }
     function updateAutoHints() {
@@ -1320,24 +1179,25 @@
         totalAdj += adj.newFinal;
         html += `<tr>
           <td>${item.metalName}<br><span style="font-size:0.6rem;">₹${item.rate}/g</span></td>
-          <td>₹${item.itemValue.toFixed(2)}</td>
-          <td>${item.weight.toFixed(2)}g</td>
-          <td>₹${item.originalMakingCharge.toFixed(2)}</td>
+          <td>₹${item.itemValue.toFixed(2)}</span></span></span></span></span></span></span></span></td>
+          <td>${item.weight.toFixed(2)}g</span></span></span></span></span></span></span></span></td>
+          <td>₹${item.originalMakingCharge.toFixed(2)}</span></span></span></span></span></span></span></span></td>
           <td><span id="gold-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:600;">₹${adj.newMaking.toFixed(2)}</span></td>
           <td><span id="gold-newfinal-${item.id}" style="font-weight:700;color:#c0392b;">₹${adj.newFinal.toFixed(2)}</span></td>
           <td><input type="number" id="gold-desired-${item.id}" class="adjustment-input" value="${adj.desiredFinal}" step="any"></td>
         </tr>`;
       });
 
+      // BLACK BACKGROUND TOTAL ROW
       html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:0.9rem;">
         <td><strong style="color:#ffffff;">TOTAL</strong></td>
         <td><strong style="color:#f5b042;">₹${tmv.toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
         <td><strong style="color:#f5b042;">₹${golds.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></td>
-        <td></td>
-      </tr></tfoot></tbody></table>`;
+        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+      </tr></tfoot></tbody></tr>`;
       
       container.innerHTML = html;
       document.getElementById("goldAdjustedTotal").innerHTML = `💰 Adjusted Gold Total: ₹ ${totalAdj.toFixed(2)}`;
@@ -1384,7 +1244,7 @@
     
     function resetGoldAdjustments() { goldAdjustData = {}; renderGoldAdjustTable(); updateSummaryPanel(); document.getElementById("goldGrandTotalInput").value = 0; }
 
-    // ========== SILVER ADJUSTMENT TABLE ==========
+    // ========== SILVER ADJUSTMENT TABLE WITH BLACK TOTAL ROW ==========
     function renderSilverAdjustTable() { 
       let silvers = billItems.filter(i => i.isSilver); 
       let container = document.getElementById("silverAdjustContainer"); 
@@ -1403,23 +1263,24 @@
         totalAdj += adj.newFinal; 
         html += `<tr>
           <td>${item.metalName}<br><span style="font-size:0.6rem;">₹${item.rate}/g</span></td>
-          <td>₹${item.itemValue.toFixed(2)}</td>
-          <td>${item.weight.toFixed(2)}g</td>
-          <td>₹${item.originalMakingCharge.toFixed(2)}</td>
+          <td>₹${item.itemValue.toFixed(2)}</span></span></span></span></span></span></span></span></td>
+          <td>${item.weight.toFixed(2)}g</span></span></span></span></span></span></span></span></td>
+          <td>₹${item.originalMakingCharge.toFixed(2)}</span></span></span></span></span></span></span></span></td>
           <td><span id="silver-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:600;">₹${adj.newMaking.toFixed(2)}</span></td>
           <td><span id="silver-newfinal-${item.id}" style="font-weight:700;color:#c0392b;">₹${adj.newFinal.toFixed(2)}</span></td>
           <td><input type="number" id="silver-desired-${item.id}" class="adjustment-input" value="${adj.desiredFinal}" step="any"></td>
         </tr>`;
       }); 
 
+      // BLACK BACKGROUND TOTAL ROW
       html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:0.9rem;">
         <td><strong style="color:#ffffff;">TOTAL</strong></td>
         <td><strong style="color:#f5b042;">₹${tmv.toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
         <td><strong style="color:#f5b042;">₹${silvers.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></td>
-        <td></td>
+        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
       </tr></tfoot></tbody></table>`;
 
       container.innerHTML = html; 
@@ -1466,7 +1327,7 @@
     
     function resetSilverAdjustments() { silverAdjustData = {}; renderSilverAdjustTable(); updateSummaryPanel(); document.getElementById("silverGrandTotalInput").value = 0; }
      
-    // ========== BILL REGISTER TABLE ==========
+    // ========== BILL REGISTER TABLE WITH BLACK TOTAL ROW ==========
     function renderBillList() { 
       let container = document.getElementById("billContainer"); 
       if (billItems.length === 0) { 
@@ -1492,20 +1353,21 @@
           <td style="font-weight:500;">${it.metalName}</td>
           <td style="font-weight:500;">${it.itemType}<br><span style="font-size:0.6rem;">rate: ₹${it.rate}/g</span></td>
           <td style="font-weight:500;">${makingDisplay}</td>
-          <td style="font-weight:900; color:red; font-size:0.9rem;">${it.weight.toFixed(2)} g</td>
-          <td style="font-weight:500; font-size:0.9rem;">₹${it.totalBeforeGst.toFixed(2)}</td>
-          <td style="font-weight:700; color:green; font-size:0.9rem;">₹${finalPrice.toFixed(2)}</td>
-          <td><button class="delete-item" onclick="removeBillItem(${it.id})">✖</button></td>
+          <td style="font-weight:900; color:red; font-size:0.9rem;">${it.weight.toFixed(2)} g</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+          <td style="font-weight:500; font-size:0.9rem;">₹${it.totalBeforeGst.toFixed(2)}</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+          <td style="font-weight:700; color:green; font-size:0.9rem;">₹${finalPrice.toFixed(2)}</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+          <td><button class="delete-item" onclick="removeBillItem(${it.id})">✖</button></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
         </tr>`;
       });
       
+      // BLACK BACKGROUND TOTAL ROW
       html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:1rem;">
         <td colspan="2"><strong style="color:#ffffff;">TOTAL</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
         <td><strong style="color:#f5b042;">₹${tb.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">₹${ta.toFixed(2)}</strong></td>
-        <td></td>
+        <td><strong style="color:#f5b042;">₹${ta.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
       </tr></tfoot></tbody></table>`;
       
       container.innerHTML = html; 
@@ -1515,7 +1377,6 @@
     function renderAllTables() { renderBillList(); renderGoldAdjustTable(); renderSilverAdjustTable(); updateSummaryPanel(); }
     window.removeBillItem = removeBillItem;
 
-    // ========== EVENT LISTENERS ==========
     document.getElementById('clearAllBtn').addEventListener('click', clearAllItems);
     document.getElementById('resetGoldAdjustBtn').addEventListener('click', resetGoldAdjustments);
     document.getElementById('applyGoldTotalBtn').addEventListener('click', applyGoldGrandTotal);
@@ -1531,7 +1392,6 @@
     document.getElementById("makingpercentage").addEventListener("input", handleManualPercentChange);
     document.getElementById("makingChargeInput").addEventListener("input", handleManualChargeChange);
 
-    // ========== INITIALIZATION ==========
     updateDynamicDropdown();
     setupFocusManagement();
     calculateAndUpdateUI();
