@@ -750,13 +750,15 @@
     </div>
 
     <div id="horizontal_tables">
-      <div class="adjustment-card">
+      <div class="adjustment-card" style="background-color: #e9e787de;">
         <div class="bill-header">
           <h3>✏️ GOLD Items Only</h3>
           <div><button id="viewGoldBtn" class="view-btn">👁️ View Gold</button><button id="resetGoldAdjustBtn" class="btn-clear">⟳ Reset Gold</button></div>
         </div>
         <div id="goldAdjustContainer" class="adjustment-table-wrapper toggleable"><div style="text-align:center; padding:2rem;">✨ Add gold items to enable adjustments</div></div>
-        <div class="grand-total-adjust"><span>🎯 Adjust Gold Total:</span><input type="number" id="goldGrandTotalInput" placeholder="Desired gold total" step="any" value="0" /><button id="applyGoldTotalBtn" class="view-btn">Update</button></div>
+        <div class="grand-total-adjust"><span>🎯 Adjust Gold Total:</span><input type="number" id="goldGrandTotalInput" placeholder="Desired gold total" step="any" value="0" />
+            <!-- <button id="applyGoldTotalBtn" class="view-btn">Update</button> -->
+        </div>
         <div class="grand-total" id="goldAdjustedTotal">💰 Adjusted Gold Total: ₹ 0.00</div>
       </div>
 
@@ -766,14 +768,22 @@
           <div><button id="viewSilverBtn" class="view-btn">👁️ View Silver</button><button id="resetSilverAdjustBtn" class="btn-clear">⟳ Reset Silver</button></div>
         </div>
         <div id="silverAdjustContainer" class="adjustment-table-wrapper toggleable"><div style="text-align:center; padding:2rem;">✨ Add silver items to enable adjustments</div></div>
-        <div class="grand-total-adjust"><span>🎯 Adjust Silver Total :</span><input type="number" id="silverGrandTotalInput" placeholder="Desired silver total" step="any" value="0" /><button id="applySilverTotalBtn" class="view-btn">Update</button></div>
+        <div class="grand-total-adjust"><span>🎯 Adjust Silver Total :</span><input type="number" id="silverGrandTotalInput" placeholder="Desired silver total" step="any" value="0" />
+            <!-- <button id="applySilverTotalBtn" class="view-btn">Update</button> -->
+        </div>
         <div class="grand-total" id="silverAdjustedTotal">💰 Adjusted Silver Total: ₹ 0.00</div>
       </div>
     </div>
 
     <div class="total-control-bar" id="totalControlPanel">
       <div class="total-badge"><span>💰 GOLD TOTAL</span><span id="summaryGoldTotal">₹0</span></div>
-      <div class="total-badge"><span>🥈 SILVER TOTAL</span><span id="summarySilverTotal">₹0</span></div>
+
+      <div class="total-badge"><span>🥈 SILVER TOTAL</span>
+        <span id="summarySilverTotal">₹0</span>
+    </div>
+
+        <!-- <input type="number" id="summarySilverTotal" placeholder="Enter new silver  total" step="any" value="0" /> -->
+
       <div class="total-badge"><span>🧾 BILL GRAND TOTAL</span><span id="summaryBillGrandTotal">₹0</span></div>
       <div class="total-edit-area">
         <label>✏️ Edit Bill Total:</label>
@@ -786,8 +796,6 @@
 
   <script>
     // ========== ADMIN AUTHENTICATION ==========
-
-  const API_BASE = 'https://bwjbackend.onrender.com/api';
     let isAdminAuthenticated = false;
     const ADMIN_PASSWORD = "00..";
 
@@ -831,90 +839,9 @@
     const beforeGstLabel = document.getElementById("beforeGstLabel"), afterGstItem = document.getElementById("afterGstItem");
     let isManualMode = false, manualPercent = null, manualCharge = null, isUpdating = false;
 
-    function loadRates() { [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => 
-      { let v = localStorage.getItem(i.id); if (v) i.value = v; }); }
-
-
-     async function fetchRatesFromDB() {
-      try {
-        statusMessage.innerHTML = "⏳ Fetching rates from database...";
-        const response = await fetch(`${API_BASE}/rates`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch rates from database');
-        }
-        const data = await response.json();
-   
-
-          input18k.value = data.data.gold18KRate || '';
-        input20k.value = data.data.gold20KRate || '';
-        input22k.value = data.data.gold22KRate || '';
-        input24k.value = data.data.gold24KRate || '';
-        silverInput.value = data.data.silverRate || '';
-        silver925Input.value = data.data.silver925Rate || '';
-
-[input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => 
-      localStorage.setItem(i.id, i.value));
-      
-      document.getElementById("statusMessage").innerHTML = "✅ Rates Saved";
-      
-      
-      setTimeout(() => { if (document.getElementById("statusMessage").innerHTML === "✅ Rates Saved") document.getElementById("statusMessage").innerHTML = "Rates Loaded"; }, 2000);
-
-        statusMessage.innerHTML = "✅ Rates loaded from database & saved to local";
-        ratesLoaded = true;
-
-        setTimeout(() => {
-          if (statusMessage.innerHTML === "✅ Rates loaded from database & saved to local")
-            statusMessage.innerHTML = "Rates Loaded";
-        }, 2000);
-        return true;
-      } catch (error) {
-        console.error('Error fetching rates from database:', error);
-        statusMessage.innerHTML = "❌ Failed to fetch rates from database";
-        return false;
-      }
-    }
-
-    async function initializeRates() {
-      // Always fetch fresh rates from database on initial load
-      console.log('Fetching rates from database on initial load...');
-      await fetchRatesFromDB();}
-
-      initializeRates();
-
-    async function saveRatesToDB() {
-      try {
-        const ratesData = {
-          gold18KRate: input18k.value,
-          gold20KRate: input20k.value,
-          gold22KRate: input22k.value,
-          gold24KRate: input24k.value,
-          silverRate: silverInput.value,
-          silver925Rate: silver925Input.value
-        };
-
-        const response = await fetch(`${API_BASE}/rates`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(ratesData)
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to save rates to database');
-        }
-fetchRatesFromDB()
-        console.log('Rates saved to database successfully');
-        return true;
-      } catch (error) {
-        console.error('Error saving rates to database:', error);
-        return false;
-      }
-    }
-
-    loadRates(); 
-    document.getElementById("submit")?.addEventListener("click", saveRatesToDB);
+    function loadRates() { [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => { let v = localStorage.getItem(i.id); if (v) i.value = v; }); }
+    function saveRates() { [input18k, input20k, input22k, input24k, silverInput, silver925Input].forEach(i => localStorage.setItem(i.id, i.value)); document.getElementById("statusMessage").innerHTML = "✅ Rates Saved"; setTimeout(() => { if (document.getElementById("statusMessage").innerHTML === "✅ Rates Saved") document.getElementById("statusMessage").innerHTML = "Rates Loaded"; }, 2000); }
+    loadRates(); document.getElementById("submit")?.addEventListener("click", saveRates);
 
     const extraWeightRemoveSelect = document.getElementById('dynamicextraweightremove');
     const stoneAmountContainer = document.getElementById('stoneAmountContainer');
@@ -1131,8 +1058,8 @@ fetchRatesFromDB()
       document.getElementById("summarySilverTotal").innerHTML = "₹ " + silverTotal.toFixed(2); 
       document.getElementById("summaryBillGrandTotal").innerHTML = "₹ " + grandTotal.toFixed(2); 
       document.getElementById("grandTotalDisplay").innerHTML = `💰 Grand Total (incl. GST): ₹ ${grandTotal.toFixed(2)}`; 
-      let manualInput = document.getElementById("manualBillTotalInput"); 
-      if (manualInput && !manualInput._syncing) manualInput.value = grandTotal.toFixed(2); 
+    //   let manualInput = document.getElementById("manualBillTotalInput"); 
+    //   if (manualInput && !manualInput._syncing) manualInput.value = grandTotal.toFixed(2); 
     }
     
     function applyBillTotalToGoldOnly(newTotalBill) { 
@@ -1171,7 +1098,7 @@ fetchRatesFromDB()
       }
       let tmv = 0, tw = 0, tm = 0, tv = 0;
       let totalAdj = 0;
-      let html = '<table class="adjustment-table"><thead><tr><th>Item</th><th>Metal Value</th><th>Wt(g)</th><th>Original Making</th><th>New Making</th><th>New Final</th><th>Update Final Value</th></tr></thead><tbody>';
+      let html = '<table class="adjustment-table"><thead><tr><th>Item</th><th>Metal Value</th><th>Original Making</th><th>Wt(g)</th><th>New Making</th><th>New Final</th><th>Update Final Value</th></tr></thead><tbody>';
       
       golds.forEach(item => {
         let adj = goldAdjustData[item.id] || { desiredFinal: item.finalPrice, newMaking: item.makingCharge, newFinal: item.finalPrice };
@@ -1179,10 +1106,11 @@ fetchRatesFromDB()
         totalAdj += adj.newFinal;
         html += `<tr>
           <td>${item.metalName}<br><span style="font-size:0.6rem;">₹${item.rate}/g</span></td>
-          <td>₹${item.itemValue.toFixed(2)}</span></span></span></span></span></span></span></span></td>
-          <td>${item.weight.toFixed(2)}g</span></span></span></span></span></span></span></span></td>
-          <td>₹${item.originalMakingCharge.toFixed(2)}</span></span></span></span></span></span></span></span></td>
-          <td><span id="gold-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:600;">₹${adj.newMaking.toFixed(2)}</span></td>
+          <td>₹${item.itemValue.toFixed(2)}</td>
+          
+          <td>₹${item.originalMakingCharge.toFixed(2)}</td>
+            <td style="font-weight:900; color:red; font-size:0.9rem;">${item.weight.toFixed(3)} g</td>
+          <td><span id="silver-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:900;font-size:0.9rem;">₹${adj.newMaking.toFixed(2)}</span></td>
           <td><span id="gold-newfinal-${item.id}" style="font-weight:700;color:#c0392b;">₹${adj.newFinal.toFixed(2)}</span></td>
           <td><input type="number" id="gold-desired-${item.id}" class="adjustment-input" value="${adj.desiredFinal}" step="any"></td>
         </tr>`;
@@ -1192,8 +1120,9 @@ fetchRatesFromDB()
       html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:0.9rem;">
         <td><strong style="color:#ffffff;">TOTAL</strong></td>
         <td><strong style="color:#f5b042;">₹${tmv.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
+        
         <td><strong style="color:#f5b042;">₹${golds.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">${tw.toFixed(3)}g</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
         <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
@@ -1239,7 +1168,8 @@ fetchRatesFromDB()
         let newFinal = item.noGST ? item.itemValue + newMaking : Math.round(((item.itemValue + newMaking) * 1.03) / 10) * 10; 
         goldAdjustData[item.id] = { desiredFinal: newFinal, newMaking, newFinal }; 
       }); 
-      renderGoldAdjustTable(); updateSummaryPanel(); alert("Gold total adjusted"); 
+      renderGoldAdjustTable(); updateSummaryPanel();
+       alert("Gold total adjusted"); 
     }
     
     function resetGoldAdjustments() { goldAdjustData = {}; renderGoldAdjustTable(); updateSummaryPanel(); document.getElementById("goldGrandTotalInput").value = 0; }
@@ -1255,7 +1185,7 @@ fetchRatesFromDB()
       } 
       let tmv = 0, tw = 0, tm = 0, tv = 0;
       let totalAdj = 0; 
-      let html = '<table class="adjustment-table"><thead><tr><th>Item</th><th>Metal Value</th><th>Wt(g)</th><th>Original Making</th><th>New Making</th><th>New Final</th><th>Update Final Value</th></tr></thead><tbody>';
+      let html = '<table class="adjustment-table"><thead><tr><th>Item</th><th>Metal Value</th><th>Original Making</th><th>Wt(g)</th><th>New Making</th><th>New Final</th><th>Update Final Value</th></tr></thead><tbody>';
       
       silvers.forEach(item => { 
         let adj = silverAdjustData[item.id] || { desiredFinal: item.finalPrice, newMaking: item.makingCharge, newFinal: item.finalPrice }; 
@@ -1263,10 +1193,12 @@ fetchRatesFromDB()
         totalAdj += adj.newFinal; 
         html += `<tr>
           <td>${item.metalName}<br><span style="font-size:0.6rem;">₹${item.rate}/g</span></td>
-          <td>₹${item.itemValue.toFixed(2)}</span></span></span></span></span></span></span></span></td>
-          <td>${item.weight.toFixed(2)}g</span></span></span></span></span></span></span></span></td>
-          <td>₹${item.originalMakingCharge.toFixed(2)}</span></span></span></span></span></span></span></span></td>
-          <td><span id="silver-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:600;">₹${adj.newMaking.toFixed(2)}</span></td>
+          <td>₹${item.itemValue.toFixed(2)}</td>
+          
+          <td>₹${item.originalMakingCharge.toFixed(2)}</td>
+         
+          <td style="font-weight:900; color:red; font-size:0.9rem;">${item.weight.toFixed(3)} g</td>
+          <td><span id="silver-newmaking-${item.id}" style="color: ${adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b'}; font-weight:900;font-size:0.9rem;">₹${adj.newMaking.toFixed(2)}</span></td>
           <td><span id="silver-newfinal-${item.id}" style="font-weight:700;color:#c0392b;">₹${adj.newFinal.toFixed(2)}</span></td>
           <td><input type="number" id="silver-desired-${item.id}" class="adjustment-input" value="${adj.desiredFinal}" step="any"></td>
         </tr>`;
@@ -1276,8 +1208,9 @@ fetchRatesFromDB()
       html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:0.9rem;">
         <td><strong style="color:#ffffff;">TOTAL</strong></td>
         <td><strong style="color:#f5b042;">₹${tmv.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
+        
         <td><strong style="color:#f5b042;">₹${silvers.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
+        <td><strong style="color:#f5b042;">${tw.toFixed(3)}g</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
         <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
@@ -1353,10 +1286,10 @@ fetchRatesFromDB()
           <td style="font-weight:500;">${it.metalName}</td>
           <td style="font-weight:500;">${it.itemType}<br><span style="font-size:0.6rem;">rate: ₹${it.rate}/g</span></td>
           <td style="font-weight:500;">${makingDisplay}</td>
-          <td style="font-weight:900; color:red; font-size:0.9rem;">${it.weight.toFixed(2)} g</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
-          <td style="font-weight:500; font-size:0.9rem;">₹${it.totalBeforeGst.toFixed(2)}</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
-          <td style="font-weight:700; color:green; font-size:0.9rem;">₹${finalPrice.toFixed(2)}</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
-          <td><button class="delete-item" onclick="removeBillItem(${it.id})">✖</button></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+          <td style="font-weight:900; color:red; font-size:0.9rem;">${it.weight.toFixed(3)} g</td>
+          <td style="font-weight:500; font-size:0.9rem;">₹${it.totalBeforeGst.toFixed(2)}</td>
+          <td style="font-weight:700; color:green; font-size:0.9rem;">₹${finalPrice.toFixed(2)}</td>
+          <td><button class="delete-item" onclick="removeBillItem(${it.id})">✖</button></td>
         </tr>`;
       });
       
@@ -1364,7 +1297,7 @@ fetchRatesFromDB()
       html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#ffffff; font-size:1rem;">
         <td colspan="2"><strong style="color:#ffffff;">TOTAL</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">${tw.toFixed(2)}g</strong></td>
+        <td><strong style="color:#f5b042;">${tw.toFixed(3)} g</strong></td>
         <td><strong style="color:#f5b042;">₹${tb.toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">₹${ta.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
         <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
@@ -1379,18 +1312,25 @@ fetchRatesFromDB()
 
     document.getElementById('clearAllBtn').addEventListener('click', clearAllItems);
     document.getElementById('resetGoldAdjustBtn').addEventListener('click', resetGoldAdjustments);
-    document.getElementById('applyGoldTotalBtn').addEventListener('click', applyGoldGrandTotal);
-    document.getElementById('resetSilverAdjustBtn').addEventListener('click', resetSilverAdjustments);
-    document.getElementById('applySilverTotalBtn').addEventListener('click', applySilverGrandTotal);
+    document.getElementById("goldGrandTotalInput").addEventListener("change", applyGoldGrandTotal)
+
+   
+    document.getElementById('resetSilverAdjustBtn').addEventListener('change', resetSilverAdjustments);
+    document.getElementById('silverGrandTotalInput').addEventListener('change', applySilverGrandTotal);
     document.getElementById('viewGoldBtn').addEventListener('click', () => document.getElementById('goldAdjustContainer').classList.toggle('visible'));
     document.getElementById('viewSilverBtn').addEventListener('click', () => document.getElementById('silverAdjustContainer').classList.toggle('visible'));
-    document.getElementById('applyBillTotalBtn').onclick = () => { let val = parseFloat(document.getElementById("manualBillTotalInput").value); if (!isNaN(val) && val >= 0) applyBillTotalToGoldOnly(val); else alert("Enter valid amount"); };
+
+    document.getElementById('manualBillTotalInput').addEventListener('change',manualBillTotalInputChange);
+
+
     document.getElementById('resetBillTotalBtn').onclick = resetBillToOriginal;
     document.getElementById("metal").addEventListener("change", () => { updateDynamicDropdown(); calculateAndUpdateUI(); });
     document.getElementById("weight").addEventListener("input", calculateAndUpdateUI);
     document.getElementById("dynamicextraweightremove").addEventListener("change", () => { updateStoneInputVisibility(); calculateAndUpdateUI(); });
     document.getElementById("makingpercentage").addEventListener("input", handleManualPercentChange);
     document.getElementById("makingChargeInput").addEventListener("input", handleManualChargeChange);
+
+    function manualBillTotalInputChange(){ let val = parseFloat(document.getElementById("manualBillTotalInput").value); if (!isNaN(val) && val >= 0) applyBillTotalToGoldOnly(val); else alert("Enter valid amount"); }
 
     updateDynamicDropdown();
     setupFocusManagement();
