@@ -1060,7 +1060,7 @@
 
         function getCategory() { return categorySelect.value; }
 
-        function getItemType() { return itemTypeInput.value.trim() || 'General Item'; }
+        function getItemType() { return itemTypeInput.value.trim() || '______________'; }
 
         function isGold() {
             const cat = getCategory();
@@ -1775,7 +1775,7 @@
         makingAmountInput.value = '';
         weightInput.value = '';
 
-        itemTypeHistory = ['.        ','Ring', 'Necklace', 'Earring', 'Bracelet', 'Chain', 'Pendant', 'Bangle'];
+        itemTypeHistory = ['Ring', 'Necklace', 'Earring', 'Bracelet', 'Chain', 'Pendant', 'Bangle','Jhala','Jhumki','Tops','Haar','Bendi','Nose Ring','Bali','Payal','Bichhiya'];
 
         updateEstimatorUI();
         renderAll();
