@@ -872,8 +872,9 @@
         <div class="price-item" id="afterGstItem"><div class="price-label">✅ AFTER GST (3%)</div><div class="price-value" id="result_after_gst">₹0.00</div></div>
       </div>
     </div>
-
-    <div class="bill-card">
+<div id="makingpergram"></div>
+    <div class="bill-card"></div>
+      
       <div class="bill-header">
         <h3>🧾 Bill Register</h3>
         <button id="clearAllBtn" class="btn-clear">🗑️ Clear All</button>
@@ -1509,6 +1510,7 @@
       // Red color for the number
       note.innerHTML = `⚡ Making per gram (Gold): <strong style="color: #3eff17;">₹${makingPerGram.toFixed(2)}</strong> / g`;
       container.prepend(note);
+      makingpergram.prepend(note)
     }
 
     // Override renderGoldAdjustTable to include making per gram
