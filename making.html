@@ -25,9 +25,7 @@
       margin: 0 auto;
     }
 
-    h1,
-    h2,
-    h3 {
+    h1, h2, h3 {
       font-weight: 600;
       letter-spacing: -0.02em;
     }
@@ -376,8 +374,7 @@
       color: #5b6e5c;
     }
 
-    select,
-    input {
+    select, input {
       padding: 10px 12px;
       border: 1.5px solid #e2dbcf;
       border-radius: 16px;
@@ -612,209 +609,77 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-4px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 768px) {
-      body {
-        padding: 12px;
-      }
-      .app-container {
-        max-width: 100%;
-      }
-      .brand-bar h1 {
-        font-size: 1.1rem;
-      }
-      .brand-bar h1::before {
-        font-size: 1.2rem;
-      }
-      .admin-toggle {
-        padding: 5px 12px;
-        font-size: 0.7rem;
-      }
-      .estimator-card,
-      .bill-card,
-      .adjustment-card {
-        padding: 16px;
-        margin-bottom: 16px;
-        border-radius: 20px;
-      }
-      .estimator-header h3,
-      .bill-header h3 {
-        font-size: 1.1rem;
-      }
+      body { padding: 12px; }
+      .app-container { max-width: 100%; }
+      .brand-bar h1 { font-size: 1.1rem; }
+      .brand-bar h1::before { font-size: 1.2rem; }
+      .admin-toggle { padding: 5px 12px; font-size: 0.7rem; }
+      .estimator-card, .bill-card, .adjustment-card { padding: 16px; margin-bottom: 16px; border-radius: 20px; }
+      .estimator-header h3, .bill-header h3 { font-size: 1.1rem; }
       /* .horizontal-fields { flex-direction: column; gap: 10px; } */
       .horizontal-fields {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        /* Creates 2 equal columns */
+       display: grid;
+      grid-template-columns: 1fr 1fr; /* Creates 2 equal columns */
         gap: 15pxx;
-      }
+}
       .horizontal-fields .field-group:nth-child(3) {
-        display: none;
-      }
-      .field-group {
-        min-width: 100%;
-        width: 100%;
-      }
-      .btn-add {
-        width: 100%;
-        text-align: center;
-        justify-content: center;
-      }
+      display: none;
+    }
+      .field-group { min-width: 100%; width: 100%; }
+      .btn-add { width: 100%; text-align: center; justify-content: center; }
       /* .price-cards { flex-direction: column; gap: 8px; }
       .price-item:first-child {
       display: none;
     } */
-      .price-cards {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-      }
-
-      .price-cards .price-item:first-child {
-        display: none;
-      }
-      .price-item {
-        min-width: auto;
-      }
-      .price-value {
-        font-size: 1rem;
-      }
-      .total-control-bar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px;
-      }
-      .total-badge {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 12px;
-      }
-      .total-badge span:first-child {
-        font-size: 0.7rem;
-      }
-      .total-badge span:last-child {
-        font-size: 1rem;
-      }
-      .total-edit-area {
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .total-edit-area input {
-        width: 100%;
-        max-width: 200px;
-      }
-      .apply-total-btn,
-      .reset-bill-total {
-        padding: 6px 12px;
-        font-size: 0.7rem;
-      }
-      .grand-total-adjust {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-      .grand-total-adjust input {
-        width: 100%;
-      }
-      .grand-total-adjust span {
-        font-size: 0.8rem;
-      }
-      .adjustment-input {
-        width: 80px;
-        font-size: 0.65rem;
-        padding: 4px;
-      }
-      .bill-table th,
-      .bill-table td,
-      .adjustment-table th,
-      .adjustment-table td {
-        padding: 6px 4px;
-        font-size: 0.65rem;
-      }
-      .delete-item {
-        padding: 3px 8px;
-        font-size: 0.65rem;
-      }
-      .view-btn,
-      .btn-clear {
-        padding: 5px 10px;
-        font-size: 0.65rem;
-      }
-      .card-header {
-        padding: 12px 16px 0 16px;
-      }
-      .card-header h2 {
-        font-size: 1rem;
-      }
-      .rates-grid {
-        gap: 8px;
-        padding: 16px;
-      }
-      .input-row {
-        min-width: 100%;
-        padding: 8px 12px;
-      }
-      .label-badge {
-        font-size: 0.8rem;
-      }
-      #horizontal_tables {
-        flex-direction: column;
-        gap: 16px;
-      }
-      #horizontal_tables .adjustment-card {
-        min-width: 100%;
-      }
-      .bill-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .bill-header div {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .auto-badge {
-        font-size: 0.6rem;
-      }
+        .price-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+        .price-cards .price-item:first-child {
+    display: none;
+  } 
+      .price-item { min-width: auto; }
+      .price-value { font-size: 1rem; }
+      .total-control-bar { flex-direction: column; align-items: stretch; padding: 12px; }
+      .total-badge { flex-direction: row; justify-content: space-between; align-items: center; padding: 8px 12px; }
+      .total-badge span:first-child { font-size: 0.7rem; }
+      .total-badge span:last-child { font-size: 1rem; }
+      .total-edit-area { justify-content: center; flex-wrap: wrap; }
+      .total-edit-area input { width: 100%; max-width: 200px; }
+      .apply-total-btn, .reset-bill-total { padding: 6px 12px; font-size: 0.7rem; }
+      .grand-total-adjust { flex-direction: column; align-items: stretch; gap: 8px; }
+      .grand-total-adjust input { width: 100%; }
+      .grand-total-adjust span { font-size: 0.8rem; }
+      .adjustment-input { width: 80px; font-size: 0.65rem; padding: 4px; }
+      .bill-table th, .bill-table td, .adjustment-table th, .adjustment-table td { padding: 6px 4px; font-size: 0.65rem; }
+      .delete-item { padding: 3px 8px; font-size: 0.65rem; }
+      .view-btn, .btn-clear { padding: 5px 10px; font-size: 0.65rem; }
+      .card-header { padding: 12px 16px 0 16px; }
+      .card-header h2 { font-size: 1rem; }
+      .rates-grid { gap: 8px; padding: 16px; }
+      .input-row { min-width: 100%; padding: 8px 12px; }
+      .label-badge { font-size: 0.8rem; }
+      #horizontal_tables { flex-direction: column; gap: 16px; }
+      #horizontal_tables .adjustment-card { min-width: 100%; }
+      .bill-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .bill-header div { display: flex; flex-wrap: wrap; gap: 8px; }
+      .auto-badge { font-size: 0.6rem; }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 8px;
-      }
-      .estimator-card,
-      .bill-card,
-      .adjustment-card {
-        padding: 12px;
-        border-radius: 18px;
-      }
-      .price-value {
-        font-size: 0.9rem;
-      }
-      .total-badge span:last-child {
-        font-size: 0.9rem;
-      }
-      .grand-total,
-      .grand-total-adjust {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-      }
-      select,
-      input {
-        padding: 8px 10px;
-        font-size: 0.8rem;
-      }
+      body { padding: 8px; }
+      .estimator-card, .bill-card, .adjustment-card { padding: 12px; border-radius: 18px; }
+      .price-value { font-size: 0.9rem; }
+      .total-badge span:last-child { font-size: 0.9rem; }
+      .grand-total, .grand-total-adjust { padding: 10px 12px; font-size: 0.85rem; }
+      select, input { padding: 8px 10px; font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -1259,13 +1124,13 @@
         <td><strong style="color:#f5b042;">₹${golds.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">${tw.toFixed(3)}g</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></td>
-        <td></td>
-      </tr></tfoot>`;
+        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+      </tr></tfoot></tbody></tr>`;
       
       container.innerHTML = html;
-      document.getElementById("goldAdjustedTotal").innerHTML = `💰 Adjusted Gold Total: ₹ ${totalAdj.toFixed(2)}`;
-      
+      document.getElementById("goldAdjustedTotal").innerHTML = `💰 Adjusted Gold Total: ₹ ${tm/tw}`;
+      // totalAdj.toFixed(2)
       golds.forEach(item => {
         let inp = document.getElementById(`gold-desired-${item.id}`);
         if (inp) inp.onchange = (e) => { let val = parseFloat(e.target.value); if (!isNaN(val) && val > 0) updateGoldAdjustment(item.id, val); };
@@ -1347,9 +1212,9 @@
         <td><strong style="color:#f5b042;">₹${silvers.reduce((s, i) => s + i.originalMakingCharge, 0).toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">${tw.toFixed(3)}g</strong></td>
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></td>
-        <td></td>
-      </tr></tfoot>`;
+        <td><strong style="color:#f5b042;">₹${tv.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+      </tr></tfoot></tbody></table>`;
 
       container.innerHTML = html; 
       document.getElementById("silverAdjustedTotal").innerHTML = `💰 Adjusted Silver Total: ₹ ${totalAdj.toFixed(2)}`; 
@@ -1434,9 +1299,9 @@
         <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
         <td><strong style="color:#f5b042;">${tw.toFixed(3)} g</strong></td>
         <td><strong style="color:#f5b042;">₹${tb.toFixed(2)}</strong></td>
-        <td><strong style="color:#f5b042;">₹${ta.toFixed(2)}</strong></td>
-        <td></td>
-      </tr></tfoot>`;
+        <td><strong style="color:#f5b042;">₹${ta.toFixed(2)}</strong></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+        <td></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+      </tr></tfoot></tbody></table>`;
       
       container.innerHTML = html; 
       updateSummaryPanel(); 
@@ -1490,58 +1355,6 @@
         }
       });
     }
-
-    // ========== ADDING MAKING PER GRAM ON TOP FOR GOLD ONLY (RED NUMBERS) ==========
-    function addMakingPerGramGold() {
-      let golds = billItems.filter(i => !i.isSilver);
-      if (golds.length === 0) return;
-      let totalMaking = golds.reduce((s, i) => s + (goldAdjustData[i.id]?.newMaking ?? i.makingCharge), 0);
-      let totalWeight = golds.reduce((s, i) => s + i.weight, 0);
-      if (totalWeight === 0) return;
-      let makingPerGram = totalMaking / totalWeight;
-      // Insert the making per gram info at the top of the gold adjustment table
-      let container = document.getElementById("goldAdjustContainer");
-      let existing = container.querySelector('.making-per-gram-note');
-      if (existing) existing.remove();
-      let note = document.createElement('div');
-      note.className = 'making-per-gram-note';
-      note.style.cssText = 'background: #1e1e2f; color: #f5b042; padding: 6px 12px; border-radius: 20px; font-weight: 500; font-size: 0.85rem; text-align: center; margin-bottom: 8px; display: inline-block; width: 100%;';
-      // Red color for the number
-      note.innerHTML = `⚡ Making per gram (Gold): <strong style="color: #3eff17;font-weight: 900 ;font-size: 0.9.9rem">₹${makingPerGram.toFixed(2)}</strong> / g`;
-      container.prepend(note);
-     
-    }
-
-    // Override renderGoldAdjustTable to include making per gram
-    const originalRenderGold = renderGoldAdjustTable;
-    renderGoldAdjustTable = function() {
-      originalRenderGold.call(this);
-      addMakingPerGramGold();
-    };
-
-    // Override renderAllTables to call our new render
-    const originalRenderAll = renderAllTables;
-    renderAllTables = function() {
-      originalRenderAll.call(this);
-      // also ensure it's added after any update
-      setTimeout(addMakingPerGramGold, 50);
-    };
-
-    // Also call it after any adjustment update
-    const originalUpdateGold = updateGoldAdjustment;
-    updateGoldAdjustment = function(id, desired) {
-      originalUpdateGold.call(this, id, desired);
-      setTimeout(addMakingPerGramGold, 50);
-    };
-
-    const originalApplyGold = applyGoldGrandTotal;
-    applyGoldGrandTotal = function() {
-      originalApplyGold.call(this);
-      setTimeout(addMakingPerGramGold, 50);
-    };
-
-    // Call it initially
-    setTimeout(addMakingPerGramGold, 100);
   </script>
 </body>
 
