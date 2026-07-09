@@ -1491,7 +1491,7 @@
       });
     }
 
-    // ========== ADDING MAKING PER GRAM ON TOP FOR GOLD ONLY ==========
+    // ========== ADDING MAKING PER GRAM ON TOP FOR GOLD ONLY (RED NUMBERS) ==========
     function addMakingPerGramGold() {
       let golds = billItems.filter(i => !i.isSilver);
       if (golds.length === 0) return;
@@ -1506,7 +1506,8 @@
       let note = document.createElement('div');
       note.className = 'making-per-gram-note';
       note.style.cssText = 'background: #1e1e2f; color: #f5b042; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; text-align: center; margin-bottom: 8px; display: inline-block; width: 100%;';
-      note.innerHTML = `⚡ Making per gram (Gold): <strong>₹${makingPerGram.toFixed(2)}</strong> / g`;
+      // Red color for the number
+      note.innerHTML = `⚡ Making per gram (Gold): <strong style="color: #ff1744;">₹${makingPerGram.toFixed(2)}</strong> / g`;
       container.prepend(note);
     }
 
