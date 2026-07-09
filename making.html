@@ -1505,9 +1505,9 @@
       if (existing) existing.remove();
       let note = document.createElement('div');
       note.className = 'making-per-gram-note';
-      note.style.cssText = 'background: #1e1e2f; color: #f5b042; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; text-align: center; margin-bottom: 8px; display: inline-block; width: 100%;';
+      note.style.cssText = 'background: #1e1e2f; color: #f5b042; padding: 6px 12px; border-radius: 20px; font-weight: 500; font-size: 0.85rem; text-align: center; margin-bottom: 8px; display: inline-block; width: 100%;';
       // Red color for the number
-      note.innerHTML = `⚡ Making per gram (Gold): <strong style="color: #3eff17;">₹${makingPerGram.toFixed(2)}</strong> / g`;
+      note.innerHTML = `⚡ Making per gram (Gold): <strong style="color: #3eff17;font-weight: 900">₹${makingPerGram.toFixed(2)}</strong> / g`;
       container.prepend(note);
      
     }
