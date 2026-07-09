@@ -1129,8 +1129,8 @@
       </tr></tfoot></tbody></tr>`;
       
       container.innerHTML = html;
-      document.getElementById("goldAdjustedTotal").innerHTML = `💰 Adjusted Gold Total: ₹ ${totalAdj.toFixed(2)}`;
-      
+      document.getElementById("goldAdjustedTotal").innerHTML = `💰 Adjusted Gold Total: ₹ ${tm/tw}`;
+      // totalAdj.toFixed(2)
       golds.forEach(item => {
         let inp = document.getElementById(`gold-desired-${item.id}`);
         if (inp) inp.onchange = (e) => { let val = parseFloat(e.target.value); if (!isNaN(val) && val > 0) updateGoldAdjustment(item.id, val); };
