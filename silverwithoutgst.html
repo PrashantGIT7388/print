@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
+    <title>BWJ Jewellery Manager | Smart Bill Total Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4f1ea;
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, sans-serif;
+            padding: 12px;
+            color: #1e293b;
+            font-size: 13px;
+        }
+
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        /* ===== RATES CARD ===== */
+        .rates-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 18px 0 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .card-header h2 {
+            font-size: 1rem;
+            color: #0f172a;
+            border-left: 4px solid #f5b042;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-header h2::after {
+            content: "▼";
+            font-size: 0.7rem;
+            color: #f5b042;
+        }
+        .card-header.collapsed h2::after {
+            content: "▶";
+        }
+
+        .rates-content {
+            transition: max-height 0.3s ease-out, padding 0.3s;
+            overflow: hidden;
+        }
+        .rates-content.collapsed {
+            max-height: 0 !important;
+            padding: 0 18px !important;
+        }
+
+        .rates-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 14px 18px 16px 18px;
+        }
+
+        .input-row {
+            flex: 1;
+            min-width: 120px;
+            background: #fefcf8;
+            border-radius: 14px;
+            padding: 6px 12px;
+            border: 1px solid #e9e2d4;
+        }
+
+        .label-badge {
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #3b2e24;
+            margin-bottom: 2px;
+        }
+
+        .input-row input {
+            width: 100%;
+            padding: 4px 2px;
+            border: none;
+            background: transparent;
+            font-size: 0.85rem;
+            font-weight: 700;
+            outline: none;
+            border-bottom: 2px solid #e9e2d4;
+        }
+
+        .currency-hint {
+            font-size: 0.55rem;
+            color: #a18f6f;
+            text-align: right;
+        }
+
+        .action-area {
+            padding: 0 18px 14px 18px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-update {
+            background: linear-gradient(105deg, #2c5f2d 0%, #1e3a1e 100%);
+            border: none;
+            padding: 6px 24px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .status-msg {
+            background: #eef2e6;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            color: #2c5f2d;
+        }
+
+        .admin-badge {
+            background: #f5b042;
+            color: #1e2a2f;
+            padding: 2px 8px;
+            border-radius: 16px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
+        /* ===== BRAND BAR ===== */
+        .brand-bar {
+            background: #1e2a2f;
+            border-radius: 20px;
+            padding: 10px 18px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .brand-bar h1 {
+            color: #f5b042;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .brand-bar h1::before {
+            content: "💎";
+            font-size: 1.2rem;
+        }
+
+        .admin-toggle {
+            background: #f5b04220;
+            border: 1px solid #f5b042;
+            padding: 4px 14px;
+            border-radius: 30px;
+            color: #f5b042;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+        .admin-toggle:hover {
+            background: #f5b04240;
+        }
+
+        /* ===== CARDS ===== */
+        .estimator-card,
+        .bill-card,
+        .adjustment-card {
+            background: white;
+            border-radius: 18px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .estimator-header,
+        .bill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .estimator-header h3,
+        .bill-header h3 {
+            font-size: 1rem;
+            border-left: 4px solid #f5b042;
+            padding-left: 10px;
+        }
+
+        /* ===== ESTIMATOR ===== */
+        .horizontal-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .field-group {
+            flex: 1;
+            min-width: 110px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field-group label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #5b6e5c;
+        }
+
+        select,
+        input {
+            padding: 6px 10px;
+            border: 1.5px solid #e2dbcf;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            background: #ffffff;
+        }
+
+        .btn-add {
+            background: #e67e22;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.1s ease;
+            white-space: nowrap;
+        }
+        .btn-add:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== PRICE CARDS ===== */
+        .price-cards {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: #fefaf5;
+            border-radius: 14px;
+            padding: 8px 10px;
+        }
+
+        .price-item {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 6px 8px;
+            text-align: center;
+            border: 1px solid #f1e7db;
+            min-width: 80px;
+        }
+        .price-item.gst-hidden {
+            display: none;
+        }
+
+        .price-label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #8b7a66;
+        }
+
+        .price-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #c0392b;
+            margin-top: 2px;
+        }
+
+        .making-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1.5px solid #e2dbcf;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.7rem;
+        }
+
+        .auto-badge {
+            font-size: 0.6rem;
+            color: #141c8b;
+            margin-top: 2px;
+        }
+
+        .stone-amount-container {
+            margin-top: 4px;
+            animation: fadeIn 0.2s;
+        }
+        .stone-amount-container.hidden {
+            display: none;
+        }
+
+        /* ===== TABLES ===== */
+        .bill-table-wrapper,
+        .adjustment-table-wrapper {
+            overflow-x: auto;
+            max-height: 260px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .adjustment-table-wrapper.toggleable.visible {
+            display: block;
+        }
+
+        .bill-table,
+        .adjustment-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.65rem;
+            min-width: 620px;
+        }
+
+        .bill-table th,
+        .adjustment-table th {
+            background: #f8f3ed;
+            padding: 6px 4px;
+            position: sticky;
+            top: 0;
+            font-size: 0.6rem;
+            white-space: nowrap;
+        }
+
+        .bill-table td,
+        .adjustment-table td {
+            padding: 4px 4px;
+            border-bottom: 1px solid #efe4d8;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .bill-table tbody tr:nth-child(even),
+        .adjustment-table tbody tr:nth-child(even) {
+            background-color: #f5ebeb;
+        }
+        .bill-table tbody tr:nth-child(odd),
+        .adjustment-table tbody tr:nth-child(odd) {
+            background-color: #fefaf5;
+        }
+
+        .delete-item {
+            background: #fee2e2;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: #b91c1c;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        .delete-item:hover {
+            background: #fecaca;
+        }
+
+        .adjustment-input {
+            width: 72px;
+            padding: 3px 4px;
+            border: 1.5px solid #f5b042;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .adjustment-input:focus {
+            outline: 2px solid #f5b042;
+            outline-offset: 1px;
+        }
+
+        /* ===== GRAND TOTAL ===== */
+        .grand-total {
+            background: #fff6ea;
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin-top: 10px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            border-left: 4px solid #f5b042;
+            text-align: right;
+        }
+
+        .grand-total-adjust {
+            background: #fff6ea;
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin-top: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border-left: 4px solid #f5b042;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: space-between;
+        }
+        .grand-total-adjust span {
+            font-size: 0.8rem;
+        }
+        .grand-total-adjust input {
+            width: 120px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            border: 1.5px solid #f5b042;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .view-btn {
+            background: #3d8b3d;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        .view-btn:hover {
+            background: #2d6b2d;
+        }
+
+        .btn-clear {
+            background: #e6d9ce;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        .btn-clear:hover {
+            background: #d5c8bc;
+        }
+
+        .helper-note {
+            font-size: 0.6rem;
+            color: #7c6e58;
+        }
+
+        /* ===== TOTAL CONTROL BAR ===== */
+        .total-control-bar {
+            background: linear-gradient(135deg, #fef9ef 0%, #fff6e8 100%);
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border: 1px solid #f5dca0;
+        }
+
+        .total-badge {
+            display: flex;
+            flex-direction: column;
+            background: #ffffffcc;
+            border-radius: 12px;
+            padding: 4px 12px;
+            backdrop-filter: blur(2px);
+            min-width: 70px;
+        }
+        .total-badge span:first-child {
+            font-size: 0.5rem;
+            font-weight: 600;
+            color: #8b5a2b;
+            text-transform: uppercase;
+        }
+        .total-badge span:last-child {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #2c5f2d;
+            letter-spacing: -0.02em;
+        }
+
+        .total-edit-area {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            background: #fff;
+            padding: 4px 12px;
+            border-radius: 30px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+        .total-edit-area label {
+            font-weight: 700;
+            color: #5a4a3a;
+            font-size: 0.65rem;
+        }
+        .total-edit-area input {
+            width: 100px;
+            padding: 4px 8px;
+            border: 2px solid #f5b042;
+            border-radius: 30px;
+            font-weight: 700;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        .apply-total-btn {
+            background: #2c5f2d;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.65rem;
+            transition: 0.1s;
+        }
+        .apply-total-btn:hover {
+            background: #1e4a1e;
+        }
+        .reset-bill-total {
+            background: #e6d9ce;
+            color: #5a4a3a;
+        }
+        .reset-bill-total:hover {
+            background: #d5c8bc;
+        }
+
+        /* ===== LAYOUT ===== */
+        #horizontal_tables {
+            display: flex;
+            flex-direction: row;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        #horizontal_tables .adjustment-card {
+            flex: 1;
+            min-width: 280px;
+            padding: 12px 14px;
+        }
+
+        /* ===== TABLE FOOTER TOTAL INPUTS ===== */
+        .total-footer-input {
+            width: 68px;
+            padding: 2px 4px;
+            border: 2px solid #f5b042;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            background: #fff;
+        }
+        .total-footer-input:focus {
+            outline: 2px solid #f5b042;
+            outline-offset: 1px;
+        }
+
+        .value-without-gst {
+            font-weight: 700;
+            color:  #c0392b;
+        }
+        .value-with-gst {
+            font-weight: 700;
+            color: #c0392b;
+        }
+        .weight-display {
+            font-weight: 900;
+            color: #dc2626;
+            font-size: 0.75rem;
+        }
+        .making-display {
+            font-weight: 900;
+            font-size: 0.75rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+                font-size: 12px;
+            }
+            .estimator-card,
+            .bill-card,
+            .adjustment-card {
+                padding: 10px 12px;
+                margin-bottom: 10px;
+                border-radius: 14px;
+            }
+            .horizontal-fields {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .horizontal-fields .field-group:nth-child(3) {
+                display: none;
+            }
+            .field-group {
+                min-width: 100%;
+            }
+            .btn-add {
+                width: 100%;
+                text-align: center;
+            }
+            .price-cards {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .price-cards .price-item:first-child {
+                display: none;
+            }
+            .price-item {
+                min-width: auto;
+                padding: 4px 6px;
+            }
+            .price-value {
+                font-size: 1rem;
+            }
+            .total-control-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 8px 12px;
+            }
+            .total-badge {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 4px 10px;
+            }
+            .total-edit-area {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .total-edit-area input {
+                width: 100%;
+                max-width: 160px;
+            }
+            #horizontal_tables {
+                flex-direction: column;
+                gap: 10px;
+            }
+            #horizontal_tables .adjustment-card {
+                min-width: 100%;
+            }
+            .bill-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            .grand-total-adjust {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .grand-total-adjust input {
+                width: 100%;
+            }
+            .adjustment-input {
+                width: 56px;
+                font-size: 0.6rem;
+                padding: 2px 4px;
+            }
+            .total-footer-input {
+                width: 52px;
+                font-size: 0.6rem;
+                padding: 2px 4px;
+            }
+            .bill-table,
+            .adjustment-table {
+                min-width: 480px;
+                font-size: 0.6rem;
+            }
+            .bill-table th,
+            .adjustment-table th {
+                font-size: 0.55rem;
+                padding: 4px 3px;
+            }
+            .bill-table td,
+            .adjustment-table td {
+                padding: 3px 3px;
+            }
+            .weight-display {
+                font-size: 0.65rem;
+            }
+            .making-display {
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 6px;
+            }
+            .estimator-card,
+            .bill-card,
+            .adjustment-card {
+                padding: 8px 10px;
+                border-radius: 12px;
+            }
+            .price-value {
+                font-size: 0.9rem;
+            }
+            .brand-bar h1 {
+                font-size: 0.95rem;
+            }
+            .total-badge span:last-child {
+                font-size: 0.8rem;
+            }
+            .grand-total,
+            .grand-total-adjust {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+            select,
+            input {
+                padding: 4px 6px;
+                font-size: 0.7rem;
+            }
+            .adjustment-input {
+                width: 48px;
+                font-size: 0.55rem;
+                padding: 2px 2px;
+            }
+            .total-footer-input {
+                width: 44px;
+                font-size: 0.55rem;
+                padding: 2px 2px;
+            }
+            .bill-table,
+            .adjustment-table {
+                min-width: 380px;
+                font-size: 0.55rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== SCROLLBAR STYLING ===== */
+        .bill-table-wrapper::-webkit-scrollbar,
+        .adjustment-table-wrapper::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .bill-table-wrapper::-webkit-scrollbar-thumb,
+        .adjustment-table-wrapper::-webkit-scrollbar-thumb {
+            background: #d5c8bc;
+            border-radius: 10px;
+        }
+        .bill-table-wrapper::-webkit-scrollbar-track,
+        .adjustment-table-wrapper::-webkit-scrollbar-track {
+            background: #f8f3ed;
+        }
+
+        /* Compact table rows */
+        .adjustment-table tbody tr,
+        .bill-table tbody tr {
+            transition: background 0.15s;
+        }
+        .adjustment-table tbody tr:hover,
+        .bill-table tbody tr:hover {
+            background: #fdf6ed !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- ===== RATES CARD ===== -->
+        <div class="rates-card" id="ratesCard" style="display: none">
+            <div class="card-header" id="ratesHeader">
+                <h2>📊 Metal Rate Configuration <span class="admin-badge">Admin Only</span></h2>
+                <div class="status-msg" id="statusMessage">Rates Loaded</div>
+            </div>
+            <div class="rates-content" id="ratesContent">
+                <div class="rates-grid">
+                    <div class="input-row"><div class="label-badge">18K Gold</div><input type="text" id="gold18KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+                    <div class="input-row"><div class="label-badge">20K Gold</div><input type="text" id="gold20KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+                    <div class="input-row"><div class="label-badge">22K Gold</div><input type="text" id="gold22KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+                    <div class="input-row"><div class="label-badge">24K Gold</div><input type="text" id="gold24KRate" placeholder="₹/100g" /><div class="currency-hint">₹ / 100g</div></div>
+                    <div class="input-row"><div class="label-badge">Silver</div><input type="text" id="silverRate" placeholder="₹/kg" /><div class="currency-hint">₹ / 1kg</div></div>
+                    <div class="input-row"><div class="label-badge">925 Silver</div><input type="text" id="silver925Rate" placeholder="₹/kg" /><div class="currency-hint">₹ / 1kg</div></div>
+                </div>
+                <div class="action-area"><button class="btn-update" id="submit">⟳ Update Rates</button></div>
+            </div>
+        </div>
+
+        <!-- ===== BRAND BAR ===== -->
+        <div class="brand-bar">
+            <h1>BWJ Jewellery Calculator</h1>
+            <button id="adminToggleBtn" class="admin-toggle">🔐 Admin Access</button>
+        </div>
+
+        <!-- ===== ESTIMATOR ===== -->
+        <div class="estimator-card">
+            <div class="estimator-header">
+                <h3>⚡ Instant Price Estimator</h3>
+                <a href="./change.html"><div class="helper-note">click to go ahead</div></a>
+            </div>
+            <div class="horizontal-fields">
+                <div class="field-group"><label>METAL</label><select id="metal" tabindex="1">
+                        <option value="18">18K Gold</option><option value="20">20K Gold</option><option value="22">22K Gold</option>
+                        <option value="24">24K Gold</option><option value="1">Pure Silver</option><option value="92.5">925 Silver</option>
+                    </select></div>
+                <div class="field-group" id="dynamicTypeContainer"><label>VARIANT</label><select id="dynamicItemSelect" tabindex="2"></select></div>
+                <div class="field-group"><label>Extra Removal</label><select id="dynamicextraweightremove" tabindex="3">
+                        <option value="default">Default</option><option value="tag-remove">Tag remove</option>
+                        <option value="stone-remove">Stone remove</option><option value="tag-stone-remove">Tag &amp; Stone</option>
+                    </select>
+                    <div id="stoneAmountContainer" class="stone-amount-container hidden"><input type="number" id="stoneAmount" placeholder="Stone (₹)" step="any" value="0" tabindex="4" /></div>
+                </div>
+                <div class="field-group"><label>WEIGHT (g)</label><input type="number" id="weight" placeholder="0.00" step="any" value="0" tabindex="5" /></div>
+                <div class="btn-row"><button class="btn-add" id="addBtn" tabindex="6">➕ Add to Bill</button></div>
+            </div>
+            <div class="price-cards">
+                <div class="price-item"><div class="price-label">💰 Metal Value</div><div class="price-value" id="metalValueDisplay">₹0.00</div></div>
+                <div class="price-item"><div class="price-label">🔨 Making %</div><input type="number" id="makingpercentage" class="making-input" placeholder="Auto" step="any" tabindex="7" /><div class="auto-badge" id="autoPercentHint">Auto: --%</div></div>
+                <div class="price-item"><div class="price-label">🔨 Making (₹)</div><input type="number" id="makingChargeInput" class="making-input" placeholder="Auto" step="any" tabindex="8" /><div class="auto-badge" id="autoChargeHint">Auto: ₹--</div></div>
+                <div class="price-item" id="beforeGstItem"><div class="price-label" id="beforeGstLabel">📦 Price BEFORE GST</div><div class="price-value" id="result_before_gst">₹0.00</div></div>
+                <div class="price-item" id="afterGstItem"><div class="price-label">✅ AFTER GST (3%)</div><div class="price-value" id="result_after_gst">₹0.00</div></div>
+            </div>
+        </div>
+
+        <!-- ===== BILL REGISTER ===== -->
+        <div class="bill-card">
+            <div class="bill-header">
+                <h3>🧾 Bill Register</h3>
+                <button id="clearAllBtn" class="btn-clear">🗑️ Clear All</button>
+            </div>
+            <div id="billContainer" class="bill-table-wrapper">
+                <div class="empty-bill" style="text-align:center; padding:1.5rem; font-size:0.8rem; color:#998f7e;">✨ No items added.</div>
+            </div>
+            <div class="grand-total" id="grandTotalDisplay">💰 Grand Total (incl. GST): ₹ 0.00</div>
+        </div>
+
+        <!-- ===== GOLD & SILVER ADJUSTMENT CARDS ===== -->
+        <div id="horizontal_tables">
+            <!-- GOLD -->
+            <div class="adjustment-card" style="background-color: #e9e787de;">
+                <div class="bill-header">
+                    <h3>✏️ GOLD Items</h3>
+                    <div>
+                        <button id="viewGoldBtn" class="view-btn">👁️ View</button>
+                        <button id="resetGoldAdjustBtn" class="btn-clear">⟳ Reset</button>
+                    </div>
+                </div>
+                <div id="goldAdjustContainer" class="adjustment-table-wrapper toggleable">
+                    <div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add gold items</div>
+                </div>
+                <!-- <div class="grand-total-adjust">
+                    <span>🎯 Adjust Gold Total :</span>
+                    <input type="number" id="goldGrandTotalInput" placeholder="Desired total" step="any" value="0" />
+                </div> -->
+            </div>
+
+            <!-- SILVER -->
+            <div class="adjustment-card">
+                <div class="bill-header">
+                    <h3>✏️ SILVER Items</h3>
+                    <div>
+                        <button id="viewSilverBtn" class="view-btn">👁️ View</button>
+                        <button id="resetSilverAdjustBtn" class="btn-clear">⟳ Reset</button>
+                    </div>
+                </div>
+                <div id="silverAdjustContainer" class="adjustment-table-wrapper toggleable">
+                    <div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add silver items</div>
+                </div>
+                <!-- <div class="grand-total-adjust">
+                    <span>🎯 Adjust Silver Total :</span>
+                    <input type="number" id="silverGrandTotalInput" placeholder="Desired total" step="any" value="0" />
+                </div> -->
+            </div>
+        </div>
+
+        <!-- ===== TOTAL CONTROL BAR ===== -->
+        <div class="total-control-bar" id="totalControlPanel">
+            <div class="total-badge"><span>💰 GOLD TOTAL</span><span id="summaryGoldTotal">₹0</span></div>
+            <div class="total-badge"><span>🥈 SILVER TOTAL</span><span id="summarySilverTotal">₹0</span></div>
+            <div class="total-badge"><span>🧾 BILL GRAND TOTAL</span><span id="summaryBillGrandTotal">₹0</span></div>
+            <div class="total-edit-area">
+                <label>✏️ Edit Bill Total:</label>
+                <input type="number" id="manualBillTotalInput" placeholder="New total" step="any" value="0" />
+                <button id="applyBillTotalBtn" class="apply-total-btn">Apply &amp; Adjust Gold</button>
+                <button id="resetBillTotalBtn" class="apply-total-btn reset-bill-total">↺ Reset</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        //  ADMIN AUTH
+        // ============================================================
+        let isAdminAuthenticated = false;
+        const ADMIN_PASSWORD = "00..";
+
+        function showAdminModal() {
+            const overlay = document.createElement('div');
+            overlay.className = 'admin-overlay';
+            overlay.innerHTML =
+                `<div class="admin-modal"><h3>🔐 Admin Access Required</h3><input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="off"><div><button id="adminSubmitBtn">Submit</button><button id="adminCancelBtn">Cancel</button></div></div>`;
+            document.body.appendChild(overlay);
+            const pwd = overlay.querySelector('#adminPassword');
+            const sub = overlay.querySelector('#adminSubmitBtn');
+            const can = overlay.querySelector('#adminCancelBtn');
+            pwd.focus();
+            sub.onclick = function() {
+                if (pwd.value === ADMIN_PASSWORD) {
+                    isAdminAuthenticated = true;
+                    document.getElementById('ratesCard').style.display = 'block';
+                    overlay.remove();
+                    alert('✅ Admin access granted.');
+                } else { alert('❌ Invalid password!');
+                    pwd.value = '';
+                    pwd.focus(); }
+            };
+            can.onclick = function() { overlay.remove(); };
+            pwd.onkeypress = function(e) { if (e.key === 'Enter') sub.click(); };
+        }
+
+        document.getElementById('adminToggleBtn').onclick = function() {
+            if (isAdminAuthenticated) {
+                const rc = document.getElementById('ratesCard');
+                rc.style.display = rc.style.display === 'none' ? 'block' : 'none';
+            } else showAdminModal();
+        };
+
+        // ============================================================
+        //  GLOBALS
+        // ============================================================
+        let billItems = [];
+        let goldAdjustData = {};
+        let silverAdjustData = {};
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const i18 = document.getElementById("gold18KRate"),
+            i20 = document.getElementById("gold20KRate"),
+            i22 = document.getElementById("gold22KRate"),
+            i24 = document.getElementById("gold24KRate"),
+            si = document.getElementById("silverRate"),
+            si925 = document.getElementById("silver925Rate");
+        const makingPct = document.getElementById("makingpercentage"),
+            makingChg = document.getElementById("makingChargeInput");
+        const autoPctHint = document.getElementById("autoPercentHint"),
+            autoChgHint = document.getElementById("autoChargeHint");
+        const beforeGstLabel = document.getElementById("beforeGstLabel"),
+            afterGstItem = document.getElementById("afterGstItem");
+
+        let isManualMode = false,
+            manualPercent = null,
+            manualCharge = null,
+            isUpdating = false;
+
+        // ============================================================
+        //  RATES
+        // ============================================================
+        function loadRates() {
+            [i18, i20, i22, i24, si, si925].forEach(el => {
+                let v = localStorage.getItem(el.id);
+                if (v) el.value = v;
+            });
+        }
+
+        function saveRates() {
+            [i18, i20, i22, i24, si, si925].forEach(el => localStorage.setItem(el.id, el.value));
+            document.getElementById("statusMessage").innerHTML = "✅ Rates Saved";
+            setTimeout(() => {
+                if (document.getElementById("statusMessage").innerHTML === "✅ Rates Saved")
+                    document.getElementById("statusMessage").innerHTML = "Rates Loaded";
+            }, 2000);
+        }
+        loadRates();
+        document.getElementById("submit")?.addEventListener("click", saveRates);
+
+        // ============================================================
+        //  EXTRA REMOVAL / STONE
+        // ============================================================
+        const extraSelect = document.getElementById('dynamicextraweightremove');
+        const stoneContainer = document.getElementById('stoneAmountContainer');
+
+        function shouldShowStone(v) { return v === 'stone-remove' || v === 'tag-stone-remove'; }
+
+        function updateStoneVis() {
+            if (shouldShowStone(extraSelect.value)) stoneContainer.classList.remove('hidden');
+            else stoneContainer.classList.add('hidden');
+        }
+
+        function getStoneAmt() {
+            const inp = document.getElementById('stoneAmount');
+            if (inp && !stoneContainer.classList.contains('hidden')) return parseFloat(inp.value) || 0;
+            return 0;
+        }
+        extraSelect.addEventListener('change', updateStoneVis);
+        updateStoneVis();
+
+        // ============================================================
+        //  METAL HELPERS
+        // ============================================================
+        function getMetalRate(mv) {
+            if (mv === "18") return parseFloat(i18.value.replace(/,/g, '')) / 10;
+            if (mv === "20") return parseFloat(i20.value.replace(/,/g, '')) / 10;
+            if (mv === "22") return parseFloat(i22.value.replace(/,/g, '')) / 10;
+            if (mv === "24") return parseFloat(i24.value.replace(/,/g, '')) / 10;
+            if (mv === "1") return parseFloat(si.value.replace(/,/g, '')) / 1000;
+            if (mv === "92.5") return parseFloat(si925.value.replace(/,/g, '')) / 1000;
+            return 0;
+        }
+
+        function isSilver(mv) { return mv === "1" || mv === "92.5"; }
+
+        function getVariant() { return document.getElementById('dynamicItemSelect').value; }
+
+        // ============================================================
+        //  DYNAMIC DROPDOWN
+        // ============================================================
+        function updateDynamicDropdown() {
+            const mv = document.getElementById('metal').value;
+            const sil = isSilver(mv);
+            let opts = '';
+            if (sil) opts =
+                '<option value="normal">Silver</option><option value="bichhiya_2ps">Bichhiya (2pcs)</option><option value="bichhiya_4ps">Bichhiya (4pcs)</option><option value="bichhiya_6ps">Bichhiya (6pcs)</option><option value="others">Others</option>';
+            else opts =
+                '<option value="normal">Gold</option><option value="keel_nosering">Keel &amp; Nose Ring (No GST)</option><option value="others">Others</option>';
+            let sel = document.getElementById('dynamicItemSelect');
+            if (!sel) {
+                const ns = document.createElement('select');
+                ns.id = 'dynamicItemSelect';
+                ns.innerHTML = opts;
+                document.getElementById('dynamicTypeContainer').appendChild(ns);
+                sel = ns;
+            } else sel.innerHTML = opts;
+            sel.removeEventListener('change', recalc);
+            sel.addEventListener('change', recalc);
+        }
+
+        function recalc() { calculateAndUpdateUI(); }
+
+        // ============================================================
+        //  CALCULATIONS
+        // ============================================================
+        function getAutoMaking(mv, variant, weight, metalCost) {
+            
+            if (!isSilver(mv)) {
+                if (variant === 'keel_nosering') return 200;
+                if (weight >= 3) return mv === "20" ? metalCost * 0.16 : metalCost * 0.18;
+                else return weight >= 1.5 ? metalCost * 0.20 : metalCost * 0.23;
+            } else {
+                console.log(mv,variant,weight);
+                if (variant === 'bichhiya_2ps') return weight <= 5 ? 70 : 100;
+                if (variant === 'bichhiya_4ps') return weight <= 10 ? 150 : 200;
+                if (variant === 'bichhiya_6ps') return weight <= 15 ? 200 : 250;
+                if (mv === '92.5') return weight * 300;
+                return weight <= 20 ? 200 : 200 + (weight - 20) * 5;
+            }
+        }
+
+        function getAutoPctDisplay(mv, variant, weight) {
+            if (isSilver(mv) || variant === 'keel_nosering') return 0;
+            if (weight >= 3) return mv === "20" ? 16 : 18;
+            else return weight >= 1.5 ? 20 : 23;
+        }
+
+        function getExtraDeduction() {
+            const typ = extraSelect.value;
+            const stone = getStoneAmt();
+            if (typ === 'tag-remove') return 0.060;
+            if (typ === 'stone-remove') return stone;
+            if (typ === 'tag-stone-remove') return 0.060 + stone;
+            return 0;
+        }
+
+        function getCurrentMetalCost() {
+            const mv = document.getElementById('metal').value;
+            let w = parseFloat(document.getElementById('weight').value) - getExtraDeduction();
+            if (isNaN(w) || w <= 0) return 0;
+            return getMetalRate(mv) * w;
+        }
+
+        function getMakingCharge() {
+            const mc = getCurrentMetalCost();
+            if (mc <= 0) return 0;
+            if (isManualMode && manualCharge !== null) return manualCharge;
+            const mv = document.getElementById('metal').value;
+            const variant = getVariant();
+            let w = parseFloat(document.getElementById('weight').value) - getExtraDeduction();
+            if (isNaN(w) || w <= 0) return 0;
+            return getAutoMaking(mv, variant, w, mc);
+        }
+
+        function shouldAvoidGST() {
+            const variant = getVariant();
+            const mv = document.getElementById('metal').value;
+            return (!isSilver(mv) && variant === 'keel_nosering');
+        }
+
+        function toggleGSTDisplay() {
+            if (shouldAvoidGST()) {
+                afterGstItem.classList.add('gst-hidden');
+                beforeGstLabel.innerHTML = '💰 FINAL PRICE (No GST)';
+            } else {
+                afterGstItem.classList.remove('gst-hidden');
+                beforeGstLabel.innerHTML = '📦 Price BEFORE GST';
+            }
+        }
+
+        function getFullCalc() {
+            const mv = document.getElementById('metal').value;
+            let w = parseFloat(document.getElementById('weight').value) - getExtraDeduction();
+            if (isNaN(w) || w <= 0) {
+                return { metalVal: mv, weight: 0, metalCost: 0, makingCharge: 0, totalBeforeGst: 0, totalAfterGst: 0,
+                    avoidGST: false };
+            }
+            const rate = getMetalRate(mv);
+            const metalCost = rate * w;
+            const makingCharge = getMakingCharge();
+            const totalBefore = metalCost + makingCharge;
+            const avoid = shouldAvoidGST();
+            const totalAfter = avoid ? totalBefore : (Math.round(totalBefore * 1.03 / 10) * 10);
+            return {
+                metalVal: mv,
+                ratePerGram: rate,
+                weight: w,
+                metalCost,
+                makingCharge,
+                totalBeforeGst: totalBefore,
+                totalAfterGst: totalAfter,
+                avoidGST: avoid,
+                variant: getVariant(),
+                removalType: extraSelect.value,
+                extraDeduction: getExtraDeduction()
+            };
+        }
+
+        function updateAutoHints() {
+            const mv = document.getElementById('metal').value;
+            const variant = getVariant();
+            let w = parseFloat(document.getElementById('weight').value) - getExtraDeduction();
+            if (isNaN(w) || w <= 0) {
+                autoPctHint.innerText = 'Auto: --%';
+                autoChgHint.innerText = 'Auto: ₹--';
+                return;
+            }
+            const mc = getCurrentMetalCost();
+            if (!isSilver(mv) && variant !== 'keel_nosering') autoPctHint.innerText = getAutoPctDisplay(mv, variant, w) +
+            '%';
+            else autoPctHint.innerText = 'Flat Rate';
+            autoChgHint.innerText = '₹' + getAutoMaking(mv, variant, w, mc).toFixed(2);
+        }
+
+        function handleManualPctChange() {
+            if (isUpdating) return;
+            isUpdating = true;
+            const v = makingPct.value.trim();
+            if (v === '') { isManualMode = false;
+                manualPercent = null;
+                manualCharge = null; } else {
+                let p = parseFloat(v);
+                if (!isNaN(p) && p >= 0) {
+                    isManualMode = true;
+                    manualPercent = p;
+                    let mc = getCurrentMetalCost();
+                    if (mc > 0) {
+                        manualCharge = mc * (p / 100);
+                        makingChg.value = manualCharge.toFixed(2);
+                    }
+                } else { isManualMode = false; }
+            }
+            calculateAndUpdateUI();
+            isUpdating = false;
+        }
+
+        function handleManualChgChange() {
+            if (isUpdating) return;
+            isUpdating = true;
+            const v = makingChg.value.trim();
+            if (v === '') { isManualMode = false;
+                manualPercent = null;
+                manualCharge = null; } else {
+                let c = parseFloat(v);
+                if (!isNaN(c) && c >= 0) {
+                    isManualMode = true;
+                    manualCharge = c;
+                    let mc = getCurrentMetalCost();
+                    if (mc > 0) {
+                        manualPercent = (c / mc) * 100;
+                        makingPct.value = manualPercent.toFixed(2);
+                    }
+                } else { isManualMode = false; }
+            }
+            calculateAndUpdateUI();
+            isUpdating = false;
+        }
+
+        function resetEstimator() {
+            document.getElementById('weight').value = '0';
+            extraSelect.value = 'default';
+            updateStoneVis();
+            const sa = document.getElementById('stoneAmount');
+            if (sa) sa.value = '0';
+            isManualMode = false;
+            manualPercent = null;
+            manualCharge = null;
+            makingPct.value = '';
+            makingChg.value = '';
+            calculateAndUpdateUI();
+        }
+
+        function calculateAndUpdateUI() {
+            updateAutoHints();
+            toggleGSTDisplay();
+            const c = getFullCalc();
+            document.getElementById('metalValueDisplay').innerText = '₹ ' + c.metalCost.toFixed(2);
+            document.getElementById('result_before_gst').innerHTML = '₹ ' + c.totalBeforeGst.toFixed(2);
+            document.getElementById('result_after_gst').innerHTML = '₹ ' + c.totalAfterGst.toFixed(2);
+            if (!isUpdating) {
+                isUpdating = true;
+                if (isManualMode && manualPercent !== null) makingPct.value = manualPercent.toFixed(2);
+                else makingPct.value = '';
+                if (isManualMode && manualCharge !== null) makingChg.value = manualCharge.toFixed(2);
+                else makingChg.value = '';
+                isUpdating = false;
+            }
+            return c;
+        }
+
+        function setupFocus() {
+            const els = [document.getElementById('metal'), document.getElementById('dynamicItemSelect'),
+                document.getElementById('dynamicextraweightremove'), document.getElementById('stoneAmount'),
+                document.getElementById('weight'), document.getElementById('addBtn'), document.getElementById(
+                    'makingpercentage'), document.getElementById('makingChargeInput')
+            ].filter(el => el !== null);
+            for (let i = 0; i < els.length; i++) {
+                els[i].addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        let ni = i + 1;
+                        while (ni < els.length && els[ni].offsetParent === null) ni++;
+                        if (ni < els.length) els[ni].focus();
+                        else els[0].focus();
+                    }
+                });
+            }
+            const btn = document.getElementById('addBtn');
+            btn.addEventListener('click', function(e) { addToBill(e);
+                document.getElementById('weight').focus(); });
+            btn.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { e.preventDefault();
+                    addToBill(e);
+                    document.getElementById('weight').focus(); }
+            });
+        }
+
+        // ============================================================
+        //  BILL ITEMS
+        // ============================================================
+        function getMetalDisplay(mv) {
+            const m = { "18": "18K Gold", "20": "20K Gold", "22": "22K Gold", "24": "24K Gold", "1": "Pure Silver",
+                "92.5": "925 Silver" };
+            return m[mv] || mv;
+        }
+
+        function getVariantDisplay(mv, vc) {
+            if (isSilver(mv)) {
+                const m = { normal: "Silver", bichhiya_2ps: "Bichhiya (2pcs)", bichhiya_4ps: "Bichhiya (4pcs)",
+                    bichhiya_6ps: "Bichhiya (6pcs)", others: "Silver Custom" };
+                return m[vc] || "Silver Item";
+            } else {
+                const m = { normal: "Gold", keel_nosering: "Keel & Nose Ring (No GST)", others: "Gold Special" };
+                return m[vc] || "Gold Item";
+            }
+        }
+
+        function addToBill(e) {
+            const c = getFullCalc();
+            if (c.weight <= 0) { alert("Enter valid weight (>0)"); return false; }
+            if (c.ratePerGram === 0) { alert("Metal rate not configured"); return false; }
+            let remText = '';
+            if (c.removalType === 'tag-remove') remText = ' (Tag Removed)';
+            else if (c.removalType === 'stone-remove') remText = ' (Stone: ₹' + c.extraDeduction + ')';
+            else if (c.removalType === 'tag-stone-remove') remText = ' (Tag+Stone: ₹' + c.extraDeduction + ')';
+            let makingDisplay = (!isSilver(c.metalVal) && c.variant !== 'keel_nosering') ?
+                (c.makingCharge / c.metalCost * 100).toFixed(1) + '% (₹' + c.makingCharge.toFixed(2) + ')' :
+                'Flat ₹' + c.makingCharge.toFixed(2);
+            const item = {
+                id: Date.now(),
+                metalName: getMetalDisplay(c.metalVal),
+                metalCost:c.metalCost,
+                weight: c.weight,
+                itemType: getVariantDisplay(c.metalVal, c.variant) + remText,
+                totalBeforeGst: c.totalBeforeGst,
+                finalPrice: c.totalAfterGst,
+                makingDisplay,
+                makingCharge: c.makingCharge,
+                rate: c.ratePerGram.toFixed(2),
+                noGST: c.avoidGST,
+                itemValue: c.metalCost,
+                originalMakingCharge: c.makingCharge,
+                originalFinalPrice: c.totalAfterGst,
+                isSilver: isSilver(c.metalVal)
+            };
+            billItems.push(item);
+            renderAll();
+            resetEstimator();
+            document.getElementById('weight').focus();
+            return true;
+        }
+
+        function removeItem(id) {
+            billItems = billItems.filter(i => i.id !== id);
+            delete goldAdjustData[id];
+            delete silverAdjustData[id];
+            renderAll();
+        }
+        window.removeBillItem = removeItem;
+
+        function clearAll() {
+            if (confirm("Clear all items?")) {
+                billItems = [];
+                goldAdjustData = {};
+                silverAdjustData = {};
+                renderAll();
+            }
+        }
+
+        // ============================================================
+        //  TOTALS
+        // ============================================================
+        function computeTotals() {
+            let gt = 0,
+                st = 0;
+            billItems.forEach(it => {
+                let f = (it.isSilver ? silverAdjustData[it.id]?.newFinal : goldAdjustData[it.id]?.newFinal) ?? it
+                    .finalPrice;
+                if (it.isSilver) st += f;
+                else gt += f;
+            });
+            return { goldTotal: gt, silverTotal: st, grandTotal: gt + st };
+        }
+
+        function updateSummary() {
+            const { goldTotal, silverTotal, grandTotal } = computeTotals();
+            document.getElementById("summaryGoldTotal").innerHTML = "₹ " + goldTotal.toFixed(2);
+            document.getElementById("summarySilverTotal").innerHTML = "₹ " + silverTotal.toFixed(2);
+            document.getElementById("summaryBillGrandTotal").innerHTML = "₹ " + grandTotal.toFixed(2);
+            document.getElementById("grandTotalDisplay").innerHTML = `💰 Grand Total (incl. GST): ₹ ${grandTotal.toFixed(2)}`;
+        }
+
+        // ============================================================
+        //  GOLD ADJUSTMENT
+        // ============================================================
+        function renderGoldTable() {
+            const golds = billItems.filter(i => !i.isSilver);
+            const container = document.getElementById("goldAdjustContainer");
+            if (golds.length === 0) {
+                container.innerHTML =
+                '<div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add gold items</div>';
+                return;
+            }
+            let sw = 0,
+                sm = 0,
+                svw = 0,
+                svg = 0;
+            let html =
+                '<table class="adjustment-table"><thead><tr><th>Item</th><th>Wt(g)</th><th>New Making</th><th>Value Without GST</th><th>Update Value Without GST</th><th>Value With GST</th><th>Update Value With GST</th></tr></thead><tbody>';
+
+            golds.forEach(item => {
+                const adj = goldAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
+                const vwg = item.itemValue + adj.newMaking;
+                const vwgst = adj.newFinal;
+                sw += item.weight;
+                sm += adj.newMaking;
+                svw += vwg;
+                svg += vwgst;
+                const mc = adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b';
+                html += `<tr>
+                    <td>${item.metalName}<br><span style="font-size:0.55rem;">₹${item.rate}/g</span></td>
+                    <td class="weight-display">${item.weight.toFixed(3)}</td>
+                    <td class="making-display" style="color:${mc};">₹${adj.newMaking.toFixed(0)}</td>
+                    <td class="value-without-gst">₹${vwg.toFixed(0)}</td>
+                    <td><input type="number" id="g-upd-wout-${item.id}" class="adjustment-input" value="${vwg.toFixed(0)}" step="any"></td>
+                    <td class="value-with-gst">₹${vwgst.toFixed(0)}</td>
+                    <td><input type="number" id="g-upd-w-${item.id}" class="adjustment-input" value="${vwgst.toFixed(0)}" step="any"></td>
+                </tr>`;
+            });
+
+            html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#fff; font-size:0.8rem;">
+                <td><strong style="color:#fff;">TOTAL</strong></td>
+                <td><strong style="color:#f5b042;">${sw.toFixed(3)}g</strong></td>
+                <td><strong style="color:#f5b042;">₹${sm.toFixed(0)}</strong></td>
+                <td><strong style="color:#f5b042;">₹${svw.toFixed(0)}</strong></td>
+                <td><input type="number" id="gold-total-without" class="total-footer-input" value="${svw.toFixed(0)}" step="any"></td>
+                <td><strong style="color:#f5b042;">₹${svg.toFixed(0)}</strong></td>
+                <td><input type="number" id="gold-total-with" class="total-footer-input" value="${svg.toFixed(0)}" step="any"></td>
+            </tr></tfoot></tbody></table>`;
+
+            container.innerHTML = html;
+
+            // per-row events
+            golds.forEach(item => {
+                const el1 = document.getElementById(`g-upd-wout-${item.id}`);
+                const el2 = document.getElementById(`g-upd-w-${item.id}`);
+                if (el1) el1.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                        updateGoldFromWithout(item.id, v); };
+                if (el2) el2.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                        updateGoldFromWith(item.id, v); };
+            });
+
+            // footer events
+            const ft1 = document.getElementById('gold-total-without');
+            const ft2 = document.getElementById('gold-total-with');
+            if (ft1) ft1.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                    adjustGoldTotalWithout(v); };
+            if (ft2) ft2.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                    adjustGoldTotalWith(v); };
+        }
+
+        function updateGoldFromWithout(id, vwg) {
+            const item = billItems.find(i => i.id === id);
+            if (!item || item.isSilver) return;
+            let nm = vwg - item.itemValue;
+            if (nm < 0) nm = 0;
+            let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+            goldAdjustData[id] = { newMaking: nm, newFinal: nf };
+            renderGoldTable();
+            updateSummary();
+            syncGoldTotals();
+        }
+
+        function updateGoldFromWith(id, vwgst) {
+            const item = billItems.find(i => i.id === id);
+            if (!item || item.isSilver) return;
+            const tb = item.noGST ? vwgst : vwgst / 1.03;
+            let nm = tb - item.itemValue;
+            if (nm < 0) nm = 0;
+            let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+            goldAdjustData[id] = { newMaking: nm, newFinal: nf };
+            renderGoldTable();
+            updateSummary();
+            syncGoldTotals();
+        }
+
+        function adjustGoldTotalWithout(target) {
+            const golds = billItems.filter(i => !i.isSilver);
+            if (!golds.length) return;
+            const totalMetal = golds.reduce((s, i) => s + i.itemValue, 0);
+            if (target < totalMetal) { alert("Total cannot be less than total metal value"); return; }
+            const needed = target - totalMetal;
+            const totalOrig = golds.reduce((s, i) => s + i.originalMakingCharge, 0);
+            golds.forEach(item => {
+                let nm;
+                if (totalOrig === 0) nm = needed / golds.length;
+                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+                goldAdjustData[item.id] = { newMaking: nm, newFinal: nf };
+            });
+            renderGoldTable();
+            updateSummary();
+            syncGoldTotals();
+        }
+
+        function adjustGoldTotalWith(target) {
+            const golds = billItems.filter(i => !i.isSilver);
+            if (!golds.length) return;
+            const totalMetal = golds.reduce((s, i) => s + i.itemValue, 0);
+            const hasGst = golds.some(i => !i.noGST);
+            const tb = hasGst ? target / 1.03 : target;
+            if (tb < totalMetal) { alert("Target below total metal value"); return; }
+            const needed = tb - totalMetal;
+            const totalOrig = golds.reduce((s, i) => s + i.originalMakingCharge, 0);
+            golds.forEach(item => {
+                let nm;
+                if (totalOrig === 0) nm = needed / golds.length;
+                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+                goldAdjustData[item.id] = { newMaking: nm, newFinal: nf };
+            });
+            renderGoldTable();
+            updateSummary();
+            syncGoldTotals();
+        }
+
+        function syncGoldTotals() {
+            const golds = billItems.filter(i => !i.isSilver);
+            if (!golds.length) return;
+            let tw = 0,
+                tg = 0;
+            golds.forEach(item => {
+                const adj = goldAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
+                tw += item.itemValue + adj.newMaking;
+                tg += adj.newFinal;
+            });
+            const ft1 = document.getElementById('gold-total-without');
+            const ft2 = document.getElementById('gold-total-with');
+            if (ft1) ft1.value = tw.toFixed(0);
+            if (ft2) ft2.value = tg.toFixed(0);
+            // const gi = document.getElementById('goldGrandTotalInput');
+            // if (gi) gi.value = tg.toFixed(0);
+        }
+
+        function resetGold() {
+            goldAdjustData = {};
+            renderGoldTable();
+            updateSummary();
+            syncGoldTotals();
+            document.getElementById('goldGrandTotalInput').value = 0;
+        }
+
+        function applyGoldGrandTotal() {
+            const v = parseFloat(document.getElementById('goldGrandTotalInput').value);
+            if (!isNaN(v) && v >= 0) adjustGoldTotalWith(v);
+        }
+
+        // ============================================================
+        //  SILVER ADJUSTMENT
+        // ============================================================
+        function renderSilverTable() {
+            const silvers = billItems.filter(i => i.isSilver);
+            const container = document.getElementById("silverAdjustContainer");
+            if (silvers.length === 0) {
+                container.innerHTML =
+                    '<div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add silver items</div>';
+                return;
+            }
+            let sw = 0,
+                sm = 0,
+                svw = 0,
+                svg = 0;
+            let html =
+                '<table class="adjustment-table"><thead><tr><th>Item</th><th>Wt(g)</th><th>New Making</th><th>Value Without GST</th><th>Update Value Without GST</th><th>Value With GST</th><th>Update Value With GST</th></tr></thead><tbody>';
+
+            silvers.forEach(item => {
+                const adj = silverAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
+                const vwg = item.itemValue + adj.newMaking;
+                const vwgst = adj.newFinal;
+                sw += item.weight;
+                sm += adj.newMaking;
+                svw += vwg;
+                svg += vwgst;
+                const mc = adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b';
+                html += `<tr>
+                    <td>${item.metalName}<br><span style="font-size:0.55rem;">₹${item.rate}/g</span></td>
+                    <td class="weight-display">${item.weight.toFixed(3)}</td>
+                    <td class="making-display" style="color:${mc};">₹${adj.newMaking.toFixed(0)}</td>
+                    <td class="value-without-gst">₹${vwg.toFixed(0)}</td>
+                    <td><input type="number" id="s-upd-wout-${item.id}" class="adjustment-input" value="${vwg.toFixed(0)}" step="any"></td>
+                    <td class="value-with-gst">₹${vwgst.toFixed(0)}</td>
+                    <td><input type="number" id="s-upd-w-${item.id}" class="adjustment-input" value="${vwgst.toFixed(0)}" step="any"></td>
+                </tr>`;
+            });
+
+            html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#fff; font-size:0.8rem;">
+                <td><strong style="color:#fff;">TOTAL</strong></td>
+                <td><strong style="color:#f5b042;">${sw.toFixed(3)}g</strong></td>
+                <td><strong style="color:#f5b042;">₹${sm.toFixed(0)}</strong></td>
+                <td><strong style="color:#f5b042;">₹${svw.toFixed(0)}</strong></td>
+                <td><input type="number" id="silver-total-without" class="total-footer-input" value="${svw.toFixed(0)}" step="any"></td>
+                <td><strong style="color:#f5b042;">₹${svg.toFixed(0)}</strong></td>
+                <td><input type="number" id="silver-total-with" class="total-footer-input" value="${svg.toFixed(0)}" step="any"></td>
+            </tr></tfoot></tbody></table>`;
+
+            container.innerHTML = html;
+
+            silvers.forEach(item => {
+                const el1 = document.getElementById(`s-upd-wout-${item.id}`);
+                const el2 = document.getElementById(`s-upd-w-${item.id}`);
+                if (el1) el1.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                        updateSilverFromWithout(item.id, v); };
+                if (el2) el2.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                        updateSilverFromWith(item.id, v); };
+            });
+
+            const ft1 = document.getElementById('silver-total-without');
+            const ft2 = document.getElementById('silver-total-with');
+            if (ft1) ft1.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                    adjustSilverTotalWithout(v); };
+            if (ft2) ft2.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
+                    adjustSilverTotalWith(v); };
+        }
+
+        function updateSilverFromWithout(id, vwg) {
+            const item = billItems.find(i => i.id === id);
+            if (!item || !item.isSilver) return;
+            let nm = vwg - item.itemValue;
+            if (nm < 0) nm = 0;
+            let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+            silverAdjustData[id] = { newMaking: nm, newFinal: nf };
+            renderSilverTable();
+            updateSummary();
+            syncSilverTotals();
+        }
+
+        function updateSilverFromWith(id, vwgst) {
+            const item = billItems.find(i => i.id === id);
+            if (!item || !item.isSilver) return;
+            const tb = item.noGST ? vwgst : vwgst / 1.03;
+            let nm = tb - item.itemValue;
+            if (nm < 0) nm = 0;
+            let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+            silverAdjustData[id] = { newMaking: nm, newFinal: nf };
+            renderSilverTable();
+            updateSummary();
+            syncSilverTotals();
+        }
+
+        function adjustSilverTotalWithout(target) {
+            const silvers = billItems.filter(i => i.isSilver);
+            if (!silvers.length) return;
+            const totalMetal = silvers.reduce((s, i) => s + i.itemValue, 0);
+            if (target < totalMetal) { alert("Total cannot be less than total metal value"); return; }
+            const needed = target - totalMetal;
+            const totalOrig = silvers.reduce((s, i) => s + i.originalMakingCharge, 0);
+            silvers.forEach(item => {
+                let nm;
+                if (totalOrig === 0) nm = needed / silvers.length;
+                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+                silverAdjustData[item.id] = { newMaking: nm, newFinal: nf };
+            });
+            renderSilverTable();
+            updateSummary();
+            syncSilverTotals();
+        }
+
+        function adjustSilverTotalWith(target) {
+            const silvers = billItems.filter(i => i.isSilver);
+            if (!silvers.length) return;
+            const totalMetal = silvers.reduce((s, i) => s + i.itemValue, 0);
+            const hasGst = silvers.some(i => !i.noGST);
+            const tb = hasGst ? target / 1.03 : target;
+            if (tb < totalMetal) { alert("Target below total metal value"); return; }
+            const needed = tb - totalMetal;
+            const totalOrig = silvers.reduce((s, i) => s + i.originalMakingCharge, 0);
+            silvers.forEach(item => {
+                let nm;
+                if (totalOrig === 0) nm = needed / silvers.length;
+                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+                silverAdjustData[item.id] = { newMaking: nm, newFinal: nf };
+            });
+            renderSilverTable();
+            updateSummary();
+            syncSilverTotals();
+        }
+
+        function syncSilverTotals() {
+            const silvers = billItems.filter(i => i.isSilver);
+            if (!silvers.length) return;
+            let tw = 0,
+                tg = 0;
+            silvers.forEach(item => {
+                const adj = silverAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
+                tw += item.itemValue + adj.newMaking;
+                tg += adj.newFinal;
+            });
+            const ft1 = document.getElementById('silver-total-without');
+            const ft2 = document.getElementById('silver-total-with');
+            if (ft1) ft1.value = tw.toFixed(0);
+            if (ft2) ft2.value = tg.toFixed(0);
+            // const gi = document.getElementById('silverGrandTotalInput');
+            // if (gi) gi.value = tg.toFixed(0);
+        }
+
+        function resetSilver() {
+            silverAdjustData = {};
+            renderSilverTable();
+            updateSummary();
+            syncSilverTotals();
+            document.getElementById('silverGrandTotalInput').value = 0;
+        }
+
+        function applySilverGrandTotal() {
+            const v = parseFloat(document.getElementById('silverGrandTotalInput').value);
+            if (!isNaN(v) && v >= 0) adjustSilverTotalWith(v);
+        }
+
+        // ============================================================
+        //  BILL REGISTER TABLE
+        // ============================================================
+        function renderBillList() {
+            const container = document.getElementById("billContainer");
+            if (billItems.length === 0) {
+                container.innerHTML =
+                    '<div style="text-align:center; padding:1.5rem; font-size:0.8rem; color:#998f7e;">✨ No items added.</div>';
+                updateSummary();
+                return;
+            }
+            let tw = 0,
+                tm = 0,
+                tb = 0,
+                ta = 0;
+            let html =
+                '<table class="bill-table"><thead><tr><th>Metal</th><th>Item Type</th><th>Metal value</th><th>Making</th><th>Wt(g)</th><th>Before GST</th><th>Final Amount</th><th></th></tr></thead><tbody>';
+
+            billItems.forEach(it => {
+                const fp = (it.isSilver ? silverAdjustData[it.id]?.newFinal : goldAdjustData[it.id]?.newFinal) ??
+                    it.finalPrice;
+                const mc = (it.isSilver ? silverAdjustData[it.id]?.newMaking : goldAdjustData[it.id]?.newMaking) ??
+                    it.makingCharge;
+                let md = it.makingDisplay;
+                if ((it.isSilver && silverAdjustData[it.id]) || (!it.isSilver && goldAdjustData[it.id])) md =
+                "Adjusted";
+                tw += it.weight;
+                tm += mc;
+                tb += it.totalBeforeGst;
+                ta += fp;
+                html += `<tr>
+                    <td style="font-weight:500;">${it.metalName}</td>
+                    <td style="font-weight:500;">${it.itemType}<br><span style="font-size:0.55rem;">rate: ₹${it.rate}/g</span></td>
+                    <td style="font-weight:500;">${it.metalCost}</td>
+                    <td style="font-weight:500;">${md}</td>
+                    <td class="weight-display">${it.weight.toFixed(3)}</td>
+                    <td style="font-weight:500;">₹${it.totalBeforeGst.toFixed(2)}</td>
+                    <td style="font-weight:700; color:#059669;">₹${fp.toFixed(2)}</td>
+                    <td><button class="delete-item" onclick="removeBillItem(${it.id})">✖</button></td>
+                </tr>`;
+            });
+
+            html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#fff; font-size:0.85rem;">
+                
+                 <td><strong style="color:#f5b042;"></strong></td>
+                 <td colspan="2"><strong style="color:#fff;">TOTAL</strong></td>
+                <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
+                <td><strong style="color:#f5b042;">${tw.toFixed(3)}g</strong></td>
+                <td><strong style="color:#f5b042;">₹${tb.toFixed(2)}</strong></td>
+                <td><strong style="color:#f5b042;">₹${ta.toFixed(2)}</strong></td>
+                <td></td>
+            </tr></tfoot></tbody></table>`;
+
+            container.innerHTML = html;
+            updateSummary();
+        }
+
+        // ============================================================
+        //  RENDER ALL
+        // ============================================================
+        function renderAll() {
+            renderBillList();
+            renderGoldTable();
+            renderSilverTable();
+            updateSummary();
+            syncGoldTotals();
+            syncSilverTotals();
+        }
+
+        // ============================================================
+        //  APPLY BILL TOTAL TO GOLD
+        // ============================================================
+        function applyBillTotalToGold(newTotal) {
+            const { goldTotal, silverTotal } = computeTotals();
+            const targetGold = newTotal - silverTotal;
+            if (targetGold < 0) { alert("Cannot be less than silver total"); return false; }
+            const golds = billItems.filter(i => !i.isSilver);
+            if (!golds.length) { alert("No gold items"); return false; }
+            const totalOrig = golds.reduce((s, i) => s + i.originalMakingCharge, 0);
+            if (totalOrig === 0) { alert("Making zero"); return false; }
+            const totalMetal = golds.reduce((s, i) => s + i.itemValue, 0);
+            const hasGst = golds.some(i => !i.noGST);
+            const tb = hasGst ? targetGold / 1.03 : targetGold;
+            const needed = tb - totalMetal;
+            if (needed < 0) { alert("Target below metal value"); return false; }
+            golds.forEach(item => {
+                const prop = item.originalMakingCharge / totalOrig;
+                const nm = needed * prop;
+                const nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
+                goldAdjustData[item.id] = { newMaking: nm, newFinal: nf };
+            });
+            renderAll();
+            return true;
+        }
+
+        function resetBillToOriginal() {
+            goldAdjustData = {};
+            silverAdjustData = {};
+            renderAll();
+            alert("Reset to original");
+        }
+
+        // ============================================================
+        //  EVENT BINDINGS
+        // ============================================================
+        document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+        document.getElementById('resetGoldAdjustBtn').addEventListener('click', resetGold);
+        document.getElementById('resetSilverAdjustBtn').addEventListener('click', resetSilver);
+        // document.getElementById('goldGrandTotalInput').addEventListener('change', applyGoldGrandTotal);
+        // document.getElementById('silverGrandTotalInput').addEventListener('change', applySilverGrandTotal);
+        document.getElementById('viewGoldBtn').addEventListener('click', () => document.getElementById('goldAdjustContainer')
+            .classList.toggle('visible'));
+        document.getElementById('viewSilverBtn').addEventListener('click', () => document.getElementById(
+            'silverAdjustContainer').classList.toggle('visible'));
+        document.getElementById('manualBillTotalInput').addEventListener('change', function() {
+            const v = parseFloat(this.value);
+            if (!isNaN(v) && v >= 0) applyBillTotalToGold(v);
+            else alert("Enter valid amount");
+        });
+        document.getElementById('resetBillTotalBtn').addEventListener('click', resetBillToOriginal);
+
+        document.getElementById('metal').addEventListener('change', () => { updateDynamicDropdown();
+            calculateAndUpdateUI(); });
+        document.getElementById('weight').addEventListener('input', calculateAndUpdateUI);
+        document.getElementById('dynamicextraweightremove').addEventListener('change', () => { updateStoneVis();
+            calculateAndUpdateUI(); });
+        makingPct.addEventListener('input', handleManualPctChange);
+        makingChg.addEventListener('input', handleManualChgChange);
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        updateDynamicDropdown();
+        setupFocus();
+        calculateAndUpdateUI();
+        renderAll();
+
+        // Rates toggle
+        const rh = document.getElementById('ratesHeader');
+        const rc = document.getElementById('ratesContent');
+        if (rh && rc) {
+            rc.style.maxHeight = '0px';
+            rc.classList.add('collapsed');
+            rh.classList.add('collapsed');
+            rh.addEventListener('click', function() {
+                if (rc.classList.contains('collapsed')) {
+                    rc.style.maxHeight = rc.scrollHeight + 'px';
+                    rc.classList.remove('collapsed');
+                    rh.classList.remove('collapsed');
+                } else {
+                    rc.style.maxHeight = '0px';
+                    rc.classList.add('collapsed');
+                    rh.classList.add('collapsed');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
