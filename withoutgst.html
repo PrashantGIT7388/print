@@ -921,19 +921,7 @@
             </div>
         </div>
 
-        <!-- BILL REGISTER -->
-        <div class="bill-card">
-            <div class="bill-header">
-                <h3>🧾 Bill Register</h3>
-                <button id="clearAllBtn" class="btn-clear">🗑️ Clear All</button>
-            </div>
-            <div id="billContainer" class="bill-table-wrapper">
-                <div class="empty-bill" style="text-align:center; padding:1.5rem; font-size:0.8rem; color:#998f7e;">✨ No items added.</div>
-            </div>
-            <div class="grand-total" id="grandTotalDisplay">💰 Grand Total (incl. GST): ₹ 0.00</div>
-        </div>
-
-        <!-- GOLD & SILVER ADJUSTMENT -->
+         <!-- GOLD & SILVER ADJUSTMENT -->
         <div id="horizontal_tables">
             <div class="adjustment-card" style="background-color: #e9e787de;">
                 <div class="bill-header">
@@ -964,6 +952,20 @@
             </div>
         </div>
 
+
+        <!-- BILL REGISTER -->
+        <div class="bill-card">
+            <div class="bill-header">
+                <h3>🧾 Bill Register</h3>
+                <button id="clearAllBtn" class="btn-clear">🗑️ Clear All</button>
+            </div>
+            <div id="billContainer" class="bill-table-wrapper">
+                <div class="empty-bill" style="text-align:center; padding:1.5rem; font-size:0.8rem; color:#998f7e;">✨ No items added.</div>
+            </div>
+            <div class="grand-total" id="grandTotalDisplay">💰 Grand Total (incl. GST): ₹ 0.00</div>
+        </div>
+
+       
     </div>
 
     <script>
@@ -1480,7 +1482,7 @@
 
             // Build info bar
             let infoHtml = `<div class="making-per-gram-info">
-                <span><span class="label"> Total Making / g :</span> <span class="value">₹${overallMakingPerGram.toFixed(2)}</span></span>`;
+                <span><span class="label"> Makings / g  =>  Total mkg / g:</span> <span class="value">₹${overallMakingPerGram.toFixed(2)}</span></span>`;
             karats.forEach(k => {
                 const val = perKarat[k];
                 infoHtml +=
