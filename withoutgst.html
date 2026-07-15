@@ -1,30 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
-    <title>BWJ Jewellery Manager | Smart Bill Total Control</title>
+    <title>BWJ Jewellery Manager | Making per Gram</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             background: #f4f1ea;
-            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, sans-serif;
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
             padding: 12px;
             color: #1e293b;
             font-size: 13px;
         }
-
         .app-container {
             max-width: 1440px;
             margin: 0 auto;
         }
-
         h1,
         h2,
         h3 {
@@ -32,7 +28,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* ===== RATES CARD ===== */
         .rates-card {
             background: #ffffff;
             border-radius: 20px;
@@ -40,7 +35,6 @@
             margin-bottom: 16px;
             overflow: hidden;
         }
-
         .card-header {
             padding: 12px 18px 0 18px;
             display: flex;
@@ -50,7 +44,6 @@
             gap: 6px;
             cursor: pointer;
         }
-
         .card-header h2 {
             font-size: 1rem;
             color: #0f172a;
@@ -60,7 +53,6 @@
             align-items: center;
             gap: 4px;
         }
-
         .card-header h2::after {
             content: "▼";
             font-size: 0.7rem;
@@ -69,7 +61,6 @@
         .card-header.collapsed h2::after {
             content: "▶";
         }
-
         .rates-content {
             transition: max-height 0.3s ease-out, padding 0.3s;
             overflow: hidden;
@@ -78,14 +69,12 @@
             max-height: 0 !important;
             padding: 0 18px !important;
         }
-
         .rates-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             padding: 14px 18px 16px 18px;
         }
-
         .input-row {
             flex: 1;
             min-width: 120px;
@@ -94,14 +83,12 @@
             padding: 6px 12px;
             border: 1px solid #e9e2d4;
         }
-
         .label-badge {
             font-weight: 700;
             font-size: 0.75rem;
             color: #3b2e24;
             margin-bottom: 2px;
         }
-
         .input-row input {
             width: 100%;
             padding: 4px 2px;
@@ -112,20 +99,17 @@
             outline: none;
             border-bottom: 2px solid #e9e2d4;
         }
-
         .currency-hint {
             font-size: 0.55rem;
             color: #a18f6f;
             text-align: right;
         }
-
         .action-area {
             padding: 0 18px 14px 18px;
             display: flex;
             justify-content: center;
             gap: 12px;
         }
-
         .btn-update {
             background: linear-gradient(105deg, #2c5f2d 0%, #1e3a1e 100%);
             border: none;
@@ -136,7 +120,6 @@
             cursor: pointer;
             font-size: 0.8rem;
         }
-
         .status-msg {
             background: #eef2e6;
             padding: 4px 14px;
@@ -144,7 +127,6 @@
             font-size: 0.65rem;
             color: #2c5f2d;
         }
-
         .admin-badge {
             background: #f5b042;
             color: #1e2a2f;
@@ -155,7 +137,6 @@
             margin-left: 6px;
         }
 
-        /* ===== BRAND BAR ===== */
         .brand-bar {
             background: #1e2a2f;
             border-radius: 20px;
@@ -167,7 +148,6 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-
         .brand-bar h1 {
             color: #f5b042;
             font-size: 1.1rem;
@@ -179,7 +159,6 @@
             content: "💎";
             font-size: 1.2rem;
         }
-
         .admin-toggle {
             background: #f5b04220;
             border: 1px solid #f5b042;
@@ -195,7 +174,6 @@
             background: #f5b04240;
         }
 
-        /* ===== CARDS ===== */
         .estimator-card,
         .bill-card,
         .adjustment-card {
@@ -205,7 +183,6 @@
             margin-bottom: 14px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
         }
-
         .estimator-header,
         .bill-header {
             display: flex;
@@ -215,7 +192,6 @@
             margin-bottom: 12px;
             gap: 8px;
         }
-
         .estimator-header h3,
         .bill-header h3 {
             font-size: 1rem;
@@ -223,7 +199,6 @@
             padding-left: 10px;
         }
 
-        /* ===== ESTIMATOR ===== */
         .horizontal-fields {
             display: flex;
             flex-wrap: wrap;
@@ -231,7 +206,6 @@
             align-items: flex-end;
             margin-bottom: 12px;
         }
-
         .field-group {
             flex: 1;
             min-width: 110px;
@@ -239,14 +213,12 @@
             flex-direction: column;
             gap: 4px;
         }
-
         .field-group label {
             font-size: 0.6rem;
             font-weight: 700;
             text-transform: uppercase;
             color: #5b6e5c;
         }
-
         select,
         input {
             padding: 6px 10px;
@@ -255,7 +227,6 @@
             font-size: 0.75rem;
             background: #ffffff;
         }
-
         .btn-add {
             background: #e67e22;
             border: none;
@@ -272,7 +243,6 @@
             transform: scale(0.95);
         }
 
-        /* ===== PRICE CARDS ===== */
         .price-cards {
             display: flex;
             gap: 8px;
@@ -281,7 +251,6 @@
             border-radius: 14px;
             padding: 8px 10px;
         }
-
         .price-item {
             flex: 1;
             background: white;
@@ -294,14 +263,12 @@
         .price-item.gst-hidden {
             display: none;
         }
-
         .price-label {
             font-size: 0.55rem;
             text-transform: uppercase;
             font-weight: 700;
             color: #8b7a66;
         }
-
         .price-value {
             font-size: 1.2rem;
             font-weight: 800;
@@ -317,13 +284,11 @@
             text-align: center;
             font-size: 0.7rem;
         }
-
         .auto-badge {
             font-size: 0.6rem;
             color: #141c8b;
             margin-top: 2px;
         }
-
         .stone-amount-container {
             margin-top: 4px;
             animation: fadeIn 0.2s;
@@ -332,7 +297,6 @@
             display: none;
         }
 
-        /* ===== TABLES ===== */
         .bill-table-wrapper,
         .adjustment-table-wrapper {
             overflow-x: auto;
@@ -340,7 +304,6 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-
         .adjustment-table-wrapper.toggleable.visible {
             display: block;
         }
@@ -352,7 +315,6 @@
             font-size: 0.65rem;
             min-width: 620px;
         }
-
         .bill-table th,
         .adjustment-table th {
             background: #f8f3ed;
@@ -362,7 +324,6 @@
             font-size: 0.6rem;
             white-space: nowrap;
         }
-
         .bill-table td,
         .adjustment-table td {
             padding: 4px 4px;
@@ -370,7 +331,6 @@
             text-align: center;
             vertical-align: middle;
         }
-
         .bill-table tbody tr:nth-child(even),
         .adjustment-table tbody tr:nth-child(even) {
             background-color: #f5ebeb;
@@ -379,7 +339,6 @@
         .adjustment-table tbody tr:nth-child(odd) {
             background-color: #fefaf5;
         }
-
         .delete-item {
             background: #fee2e2;
             border: none;
@@ -393,7 +352,6 @@
         .delete-item:hover {
             background: #fecaca;
         }
-
         .adjustment-input {
             width: 72px;
             padding: 3px 4px;
@@ -408,7 +366,6 @@
             outline-offset: 1px;
         }
 
-        /* ===== GRAND TOTAL ===== */
         .grand-total {
             background: #fff6ea;
             border-radius: 14px;
@@ -419,7 +376,6 @@
             border-left: 4px solid #f5b042;
             text-align: right;
         }
-
         .grand-total-adjust {
             background: #fff6ea;
             border-radius: 14px;
@@ -446,7 +402,6 @@
             text-align: center;
             font-weight: 600;
         }
-
         .view-btn {
             background: #3d8b3d;
             color: white;
@@ -460,7 +415,6 @@
         .view-btn:hover {
             background: #2d6b2d;
         }
-
         .btn-clear {
             background: #e6d9ce;
             border: none;
@@ -473,13 +427,11 @@
         .btn-clear:hover {
             background: #d5c8bc;
         }
-
         .helper-note {
             font-size: 0.6rem;
             color: #7c6e58;
         }
 
-        /* ===== TOTAL CONTROL BAR ===== */
         .total-control-bar {
             background: linear-gradient(135deg, #fef9ef 0%, #fff6e8 100%);
             border-radius: 16px;
@@ -492,7 +444,6 @@
             gap: 8px;
             border: 1px solid #f5dca0;
         }
-
         .total-badge {
             display: flex;
             flex-direction: column;
@@ -514,7 +465,6 @@
             color: #2c5f2d;
             letter-spacing: -0.02em;
         }
-
         .total-edit-area {
             display: flex;
             align-items: center;
@@ -561,7 +511,6 @@
             background: #d5c8bc;
         }
 
-        /* ===== LAYOUT ===== */
         #horizontal_tables {
             display: flex;
             flex-direction: row;
@@ -574,7 +523,6 @@
             padding: 12px 14px;
         }
 
-        /* ===== TABLE FOOTER TOTAL INPUTS ===== */
         .total-footer-input {
             width: 68px;
             padding: 2px 4px;
@@ -589,10 +537,9 @@
             outline: 2px solid #f5b042;
             outline-offset: 1px;
         }
-
         .value-without-gst {
             font-weight: 700;
-            color:  #c0392b;
+            color: #c0392b;
         }
         .value-with-gst {
             font-weight: 700;
@@ -608,7 +555,33 @@
             font-size: 0.75rem;
         }
 
-        /* ===== RESPONSIVE ===== */
+        .making-per-gram-info {
+            background: #f0f7ee;
+            padding: 6px 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+            border-left: 4px solid #2c5f2d;
+            align-items: center;
+        }
+        .making-per-gram-info .label {
+            color: #3b5a3b;
+        }
+        .making-per-gram-info .value {
+            color: #1a4a1a;
+            font-weight: 800;
+        }
+        .making-per-gram-info .karat-item {
+            background: #e9e9de;
+            padding: 0 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 8px;
@@ -720,8 +693,14 @@
             .making-display {
                 font-size: 0.65rem;
             }
+            .making-per-gram-info {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+                gap: 4px 10px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
-
         @media (max-width: 480px) {
             body {
                 padding: 6px;
@@ -766,8 +745,11 @@
                 min-width: 380px;
                 font-size: 0.55rem;
             }
+            .making-per-gram-info {
+                font-size: 0.65rem;
+                gap: 4px;
+            }
         }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -778,8 +760,6 @@
                 transform: translateY(0);
             }
         }
-
-        /* ===== SCROLLBAR STYLING ===== */
         .bill-table-wrapper::-webkit-scrollbar,
         .adjustment-table-wrapper::-webkit-scrollbar {
             width: 4px;
@@ -794,23 +774,94 @@
         .adjustment-table-wrapper::-webkit-scrollbar-track {
             background: #f8f3ed;
         }
-
-        /* Compact table rows */
-        .adjustment-table tbody tr,
-        .bill-table tbody tr {
-            transition: background 0.15s;
-        }
         .adjustment-table tbody tr:hover,
         .bill-table tbody tr:hover {
             background: #fdf6ed !important;
         }
+
+        .admin-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(3px);
+        }
+        .admin-modal {
+            background: #fff;
+            padding: 30px 35px;
+            border-radius: 28px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .admin-modal h3 {
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+            color: #1e2a2f;
+            border-left: 4px solid #f5b042;
+            padding-left: 12px;
+            text-align: left;
+        }
+        .admin-modal input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2dbcf;
+            border-radius: 40px;
+            font-size: 1rem;
+            margin-bottom: 18px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .admin-modal input:focus {
+            border-color: #f5b042;
+            box-shadow: 0 0 0 3px #f5b04240;
+        }
+        .admin-modal div {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .admin-modal button {
+            padding: 8px 28px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .admin-modal button:first-child {
+            background: #2c5f2d;
+            color: white;
+        }
+        .admin-modal button:first-child:hover {
+            background: #1e4a1e;
+        }
+        .admin-modal button:last-child {
+            background: #e6d9ce;
+            color: #1e2a2f;
+        }
+        .admin-modal button:last-child:hover {
+            background: #d5c8bc;
+        }
+        .pct-red {
+            color: #dc2626 !important;
+            font-weight: 700;
+        }
     </style>
 </head>
-
 <body>
     <div class="app-container">
 
-        <!-- ===== RATES CARD ===== -->
+        <!-- RATES CARD -->
         <div class="rates-card" id="ratesCard" style="display: none">
             <div class="card-header" id="ratesHeader">
                 <h2>📊 Metal Rate Configuration <span class="admin-badge">Admin Only</span></h2>
@@ -829,13 +880,13 @@
             </div>
         </div>
 
-        <!-- ===== BRAND BAR ===== -->
+        <!-- BRAND BAR -->
         <div class="brand-bar">
             <h1>BWJ Jewellery Calculator</h1>
             <button id="adminToggleBtn" class="admin-toggle">🔐 Admin Access</button>
         </div>
 
-        <!-- ===== ESTIMATOR ===== -->
+        <!-- ESTIMATOR -->
         <div class="estimator-card">
             <div class="estimator-header">
                 <h3>⚡ Instant Price Estimator</h3>
@@ -856,6 +907,11 @@
                 <div class="field-group"><label>WEIGHT (g)</label><input type="number" id="weight" placeholder="0.00" step="any" value="0" tabindex="5" /></div>
                 <div class="btn-row"><button class="btn-add" id="addBtn" tabindex="6">➕ Add to Bill</button></div>
             </div>
+            <!-- making per gram inputs -->
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 6px 0 12px 0; background: #f8f2ea; padding: 8px 12px; border-radius: 14px;">
+                <div style="flex:1; min-width:120px;"><label style="font-size:0.6rem; font-weight:700; color:#5b6e5c;">MAKING / g (Gold)</label><input type="number" id="makingPerGramGold" placeholder="₹/g" step="any" value="0" style="width:100%; padding:4px 8px; border-radius:10px; border:1.5px solid #e2dbcf;" /></div>
+                <div style="flex:1; min-width:120px;"><label style="font-size:0.6rem; font-weight:700; color:#5b6e5c;">MAKING / g (Silver)</label><input type="number" id="makingPerGramSilver" placeholder="₹/g" step="any" value="0" style="width:100%; padding:4px 8px; border-radius:10px; border:1.5px solid #e2dbcf;" /></div>
+            </div>
             <div class="price-cards">
                 <div class="price-item"><div class="price-label">💰 Metal Value</div><div class="price-value" id="metalValueDisplay">₹0.00</div></div>
                 <div class="price-item"><div class="price-label">🔨 Making %</div><input type="number" id="makingpercentage" class="making-input" placeholder="Auto" step="any" tabindex="7" /><div class="auto-badge" id="autoPercentHint">Auto: --%</div></div>
@@ -865,7 +921,7 @@
             </div>
         </div>
 
-        <!-- ===== BILL REGISTER ===== -->
+        <!-- BILL REGISTER -->
         <div class="bill-card">
             <div class="bill-header">
                 <h3>🧾 Bill Register</h3>
@@ -877,46 +933,25 @@
             <div class="grand-total" id="grandTotalDisplay">💰 Grand Total (incl. GST): ₹ 0.00</div>
         </div>
 
-        <!-- ===== GOLD & SILVER ADJUSTMENT CARDS ===== -->
+        <!-- GOLD & SILVER ADJUSTMENT -->
         <div id="horizontal_tables">
-            <!-- GOLD -->
             <div class="adjustment-card" style="background-color: #e9e787de;">
                 <div class="bill-header">
                     <h3>✏️ GOLD Items</h3>
-                    <div>
-                        <button id="viewGoldBtn" class="view-btn">👁️ View</button>
-                        <button id="resetGoldAdjustBtn" class="btn-clear">⟳ Reset</button>
-                    </div>
+                    <div><button id="viewGoldBtn" class="view-btn">👁️ View</button><button id="resetGoldAdjustBtn" class="btn-clear">⟳ Reset</button></div>
                 </div>
-                <div id="goldAdjustContainer" class="adjustment-table-wrapper toggleable">
-                    <div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add gold items</div>
-                </div>
-                <!-- <div class="grand-total-adjust">
-                    <span>🎯 Adjust Gold Total :</span>
-                    <input type="number" id="goldGrandTotalInput" placeholder="Desired total" step="any" value="0" />
-                </div> -->
+                <div id="goldAdjustContainer" class="adjustment-table-wrapper toggleable"><div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add gold items</div></div>
             </div>
-
-            <!-- SILVER -->
             <div class="adjustment-card">
                 <div class="bill-header">
                     <h3>✏️ SILVER Items</h3>
-                    <div>
-                        <button id="viewSilverBtn" class="view-btn">👁️ View</button>
-                        <button id="resetSilverAdjustBtn" class="btn-clear">⟳ Reset</button>
-                    </div>
+                    <div><button id="viewSilverBtn" class="view-btn">👁️ View</button><button id="resetSilverAdjustBtn" class="btn-clear">⟳ Reset</button></div>
                 </div>
-                <div id="silverAdjustContainer" class="adjustment-table-wrapper toggleable">
-                    <div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add silver items</div>
-                </div>
-                <!-- <div class="grand-total-adjust">
-                    <span>🎯 Adjust Silver Total :</span>
-                    <input type="number" id="silverGrandTotalInput" placeholder="Desired total" step="any" value="0" />
-                </div> -->
+                <div id="silverAdjustContainer" class="adjustment-table-wrapper toggleable"><div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add silver items</div></div>
             </div>
         </div>
 
-        <!-- ===== TOTAL CONTROL BAR ===== -->
+        <!-- TOTAL CONTROL -->
         <div class="total-control-bar" id="totalControlPanel">
             <div class="total-badge"><span>💰 GOLD TOTAL</span><span id="summaryGoldTotal">₹0</span></div>
             <div class="total-badge"><span>🥈 SILVER TOTAL</span><span id="summarySilverTotal">₹0</span></div>
@@ -933,7 +968,7 @@
 
     <script>
         // ============================================================
-        //  ADMIN AUTH
+        // ADMIN AUTH
         // ============================================================
         let isAdminAuthenticated = false;
         const ADMIN_PASSWORD = "00..";
@@ -970,15 +1005,12 @@
         };
 
         // ============================================================
-        //  GLOBALS
+        // GLOBALS
         // ============================================================
         let billItems = [];
         let goldAdjustData = {};
         let silverAdjustData = {};
 
-        // ============================================================
-        //  DOM REFS
-        // ============================================================
         const i18 = document.getElementById("gold18KRate"),
             i20 = document.getElementById("gold20KRate"),
             i22 = document.getElementById("gold22KRate"),
@@ -991,6 +1023,8 @@
             autoChgHint = document.getElementById("autoChargeHint");
         const beforeGstLabel = document.getElementById("beforeGstLabel"),
             afterGstItem = document.getElementById("afterGstItem");
+        const makingPerGramGold = document.getElementById('makingPerGramGold');
+        const makingPerGramSilver = document.getElementById('makingPerGramSilver');
 
         let isManualMode = false,
             manualPercent = null,
@@ -998,7 +1032,7 @@
             isUpdating = false;
 
         // ============================================================
-        //  RATES
+        // RATES
         // ============================================================
         function loadRates() {
             [i18, i20, i22, i24, si, si925].forEach(el => {
@@ -1019,7 +1053,7 @@
         document.getElementById("submit")?.addEventListener("click", saveRates);
 
         // ============================================================
-        //  EXTRA REMOVAL / STONE
+        // EXTRA REMOVAL / STONE
         // ============================================================
         const extraSelect = document.getElementById('dynamicextraweightremove');
         const stoneContainer = document.getElementById('stoneAmountContainer');
@@ -1036,11 +1070,12 @@
             if (inp && !stoneContainer.classList.contains('hidden')) return parseFloat(inp.value) || 0;
             return 0;
         }
-        extraSelect.addEventListener('change', updateStoneVis);
+        extraSelect.addEventListener('change', function() { updateStoneVis();
+            calculateAndUpdateUI(); });
         updateStoneVis();
 
         // ============================================================
-        //  METAL HELPERS
+        // METAL HELPERS
         // ============================================================
         function getMetalRate(mv) {
             if (mv === "18") return parseFloat(i18.value.replace(/,/g, '')) / 10;
@@ -1057,7 +1092,7 @@
         function getVariant() { return document.getElementById('dynamicItemSelect').value; }
 
         // ============================================================
-        //  DYNAMIC DROPDOWN
+        // DYNAMIC DROPDOWN
         // ============================================================
         function updateDynamicDropdown() {
             const mv = document.getElementById('metal').value;
@@ -1066,7 +1101,7 @@
             if (sil) opts =
                 '<option value="normal">Silver</option><option value="bichhiya_2ps">Bichhiya (2pcs)</option><option value="bichhiya_4ps">Bichhiya (4pcs)</option><option value="bichhiya_6ps">Bichhiya (6pcs)</option><option value="others">Others</option>';
             else opts =
-                '<option value="normal">Gold</option><option value="keel_nosering">Keel &amp; Nose Ring (No GST)</option><option value="others">Others</option>';
+                '<option value="normal">Gold</option><option value="keel_nosering">Keel & Nose Ring (No GST)</option><option value="others">Others</option>';
             let sel = document.getElementById('dynamicItemSelect');
             if (!sel) {
                 const ns = document.createElement('select');
@@ -1075,23 +1110,23 @@
                 document.getElementById('dynamicTypeContainer').appendChild(ns);
                 sel = ns;
             } else sel.innerHTML = opts;
-            sel.removeEventListener('change', recalc);
-            sel.addEventListener('change', recalc);
+            sel.removeEventListener('change', calculateAndUpdateUI);
+            sel.addEventListener('change', calculateAndUpdateUI);
         }
 
-        function recalc() { calculateAndUpdateUI(); }
-
         // ============================================================
-        //  CALCULATIONS
+        // CALCULATIONS
         // ============================================================
         function getAutoMaking(mv, variant, weight, metalCost) {
-            
-            if (!isSilver(mv)) {
+            const sil = isSilver(mv);
+            let makingPerGram = sil ? (parseFloat(makingPerGramSilver.value) || 0) : (parseFloat(makingPerGramGold.value) ||
+            0);
+            if (makingPerGram > 0) return makingPerGram * weight;
+            if (!sil) {
                 if (variant === 'keel_nosering') return 200;
                 if (weight >= 3) return mv === "20" ? metalCost * 0.16 : metalCost * 0.18;
                 else return weight >= 1.5 ? metalCost * 0.20 : metalCost * 0.23;
             } else {
-                console.log(mv,variant,weight);
                 if (variant === 'bichhiya_2ps') return weight <= 5 ? 70 : 100;
                 if (variant === 'bichhiya_4ps') return weight <= 10 ? 150 : 200;
                 if (variant === 'bichhiya_6ps') return weight <= 15 ? 200 : 250;
@@ -1101,7 +1136,11 @@
         }
 
         function getAutoPctDisplay(mv, variant, weight) {
-            if (isSilver(mv) || variant === 'keel_nosering') return 0;
+            const sil = isSilver(mv);
+            const makingPerGram = sil ? (parseFloat(makingPerGramSilver.value) || 0) : (parseFloat(makingPerGramGold.value) ||
+            0);
+            if (makingPerGram > 0) return 0;
+            if (sil || variant === 'keel_nosering') return 0;
             if (weight >= 3) return mv === "20" ? 16 : 18;
             else return weight >= 1.5 ? 20 : 23;
         }
@@ -1187,10 +1226,17 @@
                 return;
             }
             const mc = getCurrentMetalCost();
-            if (!isSilver(mv) && variant !== 'keel_nosering') autoPctHint.innerText = getAutoPctDisplay(mv, variant, w) +
-            '%';
-            else autoPctHint.innerText = 'Flat Rate';
-            autoChgHint.innerText = '₹' + getAutoMaking(mv, variant, w, mc).toFixed(2);
+            const sil = isSilver(mv);
+            const makingPerGram = sil ? (parseFloat(makingPerGramSilver.value) || 0) : (parseFloat(makingPerGramGold.value) ||
+            0);
+            if (makingPerGram > 0) {
+                autoPctHint.innerText = 'Per Gram: ₹' + makingPerGram.toFixed(2) + '/g';
+                autoChgHint.innerText = 'Auto: ₹' + (makingPerGram * w).toFixed(2);
+            } else {
+                if (!sil && variant !== 'keel_nosering') autoPctHint.innerText = getAutoPctDisplay(mv, variant, w) + '%';
+                else autoPctHint.innerText = 'Flat Rate';
+                autoChgHint.innerText = '₹' + getAutoMaking(mv, variant, w, mc).toFixed(2);
+            }
         }
 
         function handleManualPctChange() {
@@ -1272,8 +1318,8 @@
         function setupFocus() {
             const els = [document.getElementById('metal'), document.getElementById('dynamicItemSelect'),
                 document.getElementById('dynamicextraweightremove'), document.getElementById('stoneAmount'),
-                document.getElementById('weight'), document.getElementById('addBtn'), document.getElementById(
-                    'makingpercentage'), document.getElementById('makingChargeInput')
+                document.getElementById('weight'), document.getElementById('addBtn'),
+                document.getElementById('makingpercentage'), document.getElementById('makingChargeInput')
             ].filter(el => el !== null);
             for (let i = 0; i < els.length; i++) {
                 els[i].addEventListener('keydown', function(e) {
@@ -1297,7 +1343,7 @@
         }
 
         // ============================================================
-        //  BILL ITEMS
+        // BILL ITEMS
         // ============================================================
         function getMetalDisplay(mv) {
             const m = { "18": "18K Gold", "20": "20K Gold", "22": "22K Gold", "24": "24K Gold", "1": "Pure Silver",
@@ -1330,7 +1376,8 @@
             const item = {
                 id: Date.now(),
                 metalName: getMetalDisplay(c.metalVal),
-                metalCost:c.metalCost,
+                metalValue: c.metalVal, // store metal value as string "18", "20", etc.
+                metalCost: c.metalCost,
                 weight: c.weight,
                 itemType: getVariantDisplay(c.metalVal, c.variant) + remText,
                 totalBeforeGst: c.totalBeforeGst,
@@ -1369,7 +1416,7 @@
         }
 
         // ============================================================
-        //  TOTALS
+        // TOTALS
         // ============================================================
         function computeTotals() {
             let gt = 0,
@@ -1392,36 +1439,78 @@
         }
 
         // ============================================================
-        //  GOLD ADJUSTMENT
+        // GOLD ADJUSTMENT (with per-karat making per gram)
         // ============================================================
         function renderGoldTable() {
             const golds = billItems.filter(i => !i.isSilver);
             const container = document.getElementById("goldAdjustContainer");
             if (golds.length === 0) {
                 container.innerHTML =
-                '<div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add gold items</div>';
+                    '<div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add gold items</div>';
                 return;
             }
+
+            // Compute making per gram overall and per karat (18,20,22)
+            let totalWeightOverall = 0,
+                totalMakingOverall = 0;
+            const karats = ['18', '20', '22'];
+            const perKarat = {};
+            karats.forEach(k => {
+                const items = golds.filter(it => it.metalValue === k);
+                let tw = 0,
+                    tm = 0;
+                items.forEach(it => {
+                    const adj = goldAdjustData[it.id] || { newMaking: it.makingCharge };
+                    tw += it.weight;
+                    tm += adj.newMaking;
+                });
+                perKarat[k] = tw > 0 ? tm / tw : 0;
+                // add to overall
+                totalWeightOverall += tw;
+                totalMakingOverall += tm;
+            });
+            // also include any other karats (like 24) in overall
+            const otherItems = golds.filter(it => !karats.includes(it.metalValue));
+            otherItems.forEach(it => {
+                const adj = goldAdjustData[it.id] || { newMaking: it.makingCharge };
+                totalWeightOverall += it.weight;
+                totalMakingOverall += adj.newMaking;
+            });
+            const overallMakingPerGram = totalWeightOverall > 0 ? totalMakingOverall / totalWeightOverall : 0;
+
+            // Build info bar
+            let infoHtml = `<div class="making-per-gram-info">
+                <span><span class="label"> Total Making / g :</span> <span class="value">₹${overallMakingPerGram.toFixed(2)}</span></span>`;
+            karats.forEach(k => {
+                const val = perKarat[k];
+                infoHtml +=
+                    `<span class="karat-item"><span class="label">${k}K :</span> <span class="value">₹${val.toFixed(2)}</span></span>`;
+            });
+            infoHtml += `</div>`;
+
             let sw = 0,
                 sm = 0,
                 svw = 0,
                 svg = 0;
-            let html =
+            let tableHtml =
                 '<table class="adjustment-table"><thead><tr><th>Item</th><th>Wt(g)</th><th>New Making</th><th>Value Without GST</th><th>Update Value Without GST</th><th>Value With GST</th><th>Update Value With GST</th></tr></thead><tbody>';
 
             golds.forEach(item => {
                 const adj = goldAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
                 const vwg = item.itemValue + adj.newMaking;
                 const vwgst = adj.newFinal;
+                const pct = item.itemValue > 0 ? (adj.newMaking / item.itemValue) * 100 : 0;
                 sw += item.weight;
                 sm += adj.newMaking;
                 svw += vwg;
                 svg += vwgst;
                 const mc = adj.newMaking !== item.originalMakingCharge ? '#2563eb' : '#1e293b';
-                html += `<tr>
+                tableHtml += `<tr>
                     <td>${item.metalName}<br><span style="font-size:0.55rem;">₹${item.rate}/g</span></td>
                     <td class="weight-display">${item.weight.toFixed(3)}</td>
-                    <td class="making-display" style="color:${mc};">₹${adj.newMaking.toFixed(0)}</td>
+                    <td class="making-display" style="color:${mc};">
+                        ₹${adj.newMaking.toFixed(0)} <span class="pct-red">(${pct.toFixed(1)}%)</span>
+                    </td>
                     <td class="value-without-gst">₹${vwg.toFixed(0)}</td>
                     <td><input type="number" id="g-upd-wout-${item.id}" class="adjustment-input" value="${vwg.toFixed(0)}" step="any"></td>
                     <td class="value-with-gst">₹${vwgst.toFixed(0)}</td>
@@ -1429,7 +1518,7 @@
                 </tr>`;
             });
 
-            html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#fff; font-size:0.8rem;">
+            tableHtml += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#fff; font-size:0.8rem;">
                 <td><strong style="color:#fff;">TOTAL</strong></td>
                 <td><strong style="color:#f5b042;">${sw.toFixed(3)}g</strong></td>
                 <td><strong style="color:#f5b042;">₹${sm.toFixed(0)}</strong></td>
@@ -1439,9 +1528,8 @@
                 <td><input type="number" id="gold-total-with" class="total-footer-input" value="${svg.toFixed(0)}" step="any"></td>
             </tr></tfoot></tbody></table>`;
 
-            container.innerHTML = html;
+            container.innerHTML = infoHtml + tableHtml;
 
-            // per-row events
             golds.forEach(item => {
                 const el1 = document.getElementById(`g-upd-wout-${item.id}`);
                 const el2 = document.getElementById(`g-upd-w-${item.id}`);
@@ -1450,8 +1538,6 @@
                 if (el2) el2.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
                         updateGoldFromWith(item.id, v); };
             });
-
-            // footer events
             const ft1 = document.getElementById('gold-total-without');
             const ft2 = document.getElementById('gold-total-with');
             if (ft1) ft1.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
@@ -1493,9 +1579,7 @@
             const needed = target - totalMetal;
             const totalOrig = golds.reduce((s, i) => s + i.originalMakingCharge, 0);
             golds.forEach(item => {
-                let nm;
-                if (totalOrig === 0) nm = needed / golds.length;
-                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nm = totalOrig === 0 ? needed / golds.length : needed * (item.originalMakingCharge / totalOrig);
                 let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
                 goldAdjustData[item.id] = { newMaking: nm, newFinal: nf };
             });
@@ -1514,9 +1598,7 @@
             const needed = tb - totalMetal;
             const totalOrig = golds.reduce((s, i) => s + i.originalMakingCharge, 0);
             golds.forEach(item => {
-                let nm;
-                if (totalOrig === 0) nm = needed / golds.length;
-                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nm = totalOrig === 0 ? needed / golds.length : needed * (item.originalMakingCharge / totalOrig);
                 let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
                 goldAdjustData[item.id] = { newMaking: nm, newFinal: nf };
             });
@@ -1539,25 +1621,15 @@
             const ft2 = document.getElementById('gold-total-with');
             if (ft1) ft1.value = tw.toFixed(0);
             if (ft2) ft2.value = tg.toFixed(0);
-            // const gi = document.getElementById('goldGrandTotalInput');
-            // if (gi) gi.value = tg.toFixed(0);
         }
 
-        function resetGold() {
-            goldAdjustData = {};
+        function resetGold() { goldAdjustData = {};
             renderGoldTable();
             updateSummary();
-            syncGoldTotals();
-            document.getElementById('goldGrandTotalInput').value = 0;
-        }
-
-        function applyGoldGrandTotal() {
-            const v = parseFloat(document.getElementById('goldGrandTotalInput').value);
-            if (!isNaN(v) && v >= 0) adjustGoldTotalWith(v);
-        }
+            syncGoldTotals(); }
 
         // ============================================================
-        //  SILVER ADJUSTMENT
+        // SILVER ADJUSTMENT (with making per gram split by purity)
         // ============================================================
         function renderSilverTable() {
             const silvers = billItems.filter(i => i.isSilver);
@@ -1567,17 +1639,63 @@
                     '<div style="text-align:center; padding:1.2rem; font-size:0.75rem; color:#998f7e;">✨ Add silver items</div>';
                 return;
             }
+
+            // separate by purity
+            const pureSilver = silvers.filter(i => i.metalName === "Pure Silver");
+            const silver925 = silvers.filter(i => i.metalName === "925 Silver");
+
+            let html = `<div class="making-per-gram-info">`;
+
+            // Pure Silver
+            let twP = 0,
+                tmP = 0;
+            pureSilver.forEach(item => {
+                const adj = silverAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
+                twP += item.weight;
+                tmP += adj.newMaking;
+            });
+            const mpP = twP > 0 ? tmP / twP : 0;
+            html +=
+                `<span><span class="label"> Pure Silver / g :</span> <span class="value">₹${mpP.toFixed(2)}</span></span>`;
+
+            // 925 Silver
+            let tw925 = 0,
+                tm925 = 0;
+            silver925.forEach(item => {
+                const adj = silverAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
+                tw925 += item.weight;
+                tm925 += adj.newMaking;
+            });
+            const mp925 = tw925 > 0 ? tm925 / tw925 : 0;
+            html +=
+                `<span><span class="label"> 92.5 Silver / g :</span> <span class="value">₹${mp925.toFixed(2)}</span></span>`;
+
+            // total weight & making
+            let twAll = 0,
+                tmAll = 0;
+            silvers.forEach(item => {
+                const adj = silverAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
+                twAll += item.weight;
+                tmAll += adj.newMaking;
+            });
+            // html +=
+            //     `<span><span class="label">⚖️ Total Weight :</span> <span class="value">${twAll.toFixed(3)} g</span></span>`;
+            // html +=
+            //     `<span><span class="label">🔨 Total Making :</span> <span class="value">₹${tmAll.toFixed(0)}</span></span>`;
+            html += `</div>`;
+
             let sw = 0,
                 sm = 0,
                 svw = 0,
                 svg = 0;
-            let html =
+            html +=
                 '<table class="adjustment-table"><thead><tr><th>Item</th><th>Wt(g)</th><th>New Making</th><th>Value Without GST</th><th>Update Value Without GST</th><th>Value With GST</th><th>Update Value With GST</th></tr></thead><tbody>';
 
             silvers.forEach(item => {
                 const adj = silverAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
                 const vwg = item.itemValue + adj.newMaking;
                 const vwgst = adj.newFinal;
+                const pct = item.itemValue > 0 ? (adj.newMaking / item.itemValue) * 100 : 0;
                 sw += item.weight;
                 sm += adj.newMaking;
                 svw += vwg;
@@ -1586,7 +1704,9 @@
                 html += `<tr>
                     <td>${item.metalName}<br><span style="font-size:0.55rem;">₹${item.rate}/g</span></td>
                     <td class="weight-display">${item.weight.toFixed(3)}</td>
-                    <td class="making-display" style="color:${mc};">₹${adj.newMaking.toFixed(0)}</td>
+                    <td class="making-display" style="color:${mc};">
+                        ₹${adj.newMaking.toFixed(0)} <span class="pct-red">(${pct.toFixed(1)}%)</span>
+                    </td>
                     <td class="value-without-gst">₹${vwg.toFixed(0)}</td>
                     <td><input type="number" id="s-upd-wout-${item.id}" class="adjustment-input" value="${vwg.toFixed(0)}" step="any"></td>
                     <td class="value-with-gst">₹${vwgst.toFixed(0)}</td>
@@ -1614,7 +1734,6 @@
                 if (el2) el2.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
                         updateSilverFromWith(item.id, v); };
             });
-
             const ft1 = document.getElementById('silver-total-without');
             const ft2 = document.getElementById('silver-total-with');
             if (ft1) ft1.onchange = function() { const v = parseFloat(this.value); if (!isNaN(v) && v >= 0)
@@ -1656,9 +1775,7 @@
             const needed = target - totalMetal;
             const totalOrig = silvers.reduce((s, i) => s + i.originalMakingCharge, 0);
             silvers.forEach(item => {
-                let nm;
-                if (totalOrig === 0) nm = needed / silvers.length;
-                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nm = totalOrig === 0 ? needed / silvers.length : needed * (item.originalMakingCharge / totalOrig);
                 let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
                 silverAdjustData[item.id] = { newMaking: nm, newFinal: nf };
             });
@@ -1677,9 +1794,7 @@
             const needed = tb - totalMetal;
             const totalOrig = silvers.reduce((s, i) => s + i.originalMakingCharge, 0);
             silvers.forEach(item => {
-                let nm;
-                if (totalOrig === 0) nm = needed / silvers.length;
-                else nm = needed * (item.originalMakingCharge / totalOrig);
+                let nm = totalOrig === 0 ? needed / silvers.length : needed * (item.originalMakingCharge / totalOrig);
                 let nf = item.noGST ? item.itemValue + nm : Math.round(((item.itemValue + nm) * 1.03) / 10) * 10;
                 silverAdjustData[item.id] = { newMaking: nm, newFinal: nf };
             });
@@ -1702,25 +1817,15 @@
             const ft2 = document.getElementById('silver-total-with');
             if (ft1) ft1.value = tw.toFixed(0);
             if (ft2) ft2.value = tg.toFixed(0);
-            // const gi = document.getElementById('silverGrandTotalInput');
-            // if (gi) gi.value = tg.toFixed(0);
         }
 
-        function resetSilver() {
-            silverAdjustData = {};
+        function resetSilver() { silverAdjustData = {};
             renderSilverTable();
             updateSummary();
-            syncSilverTotals();
-            document.getElementById('silverGrandTotalInput').value = 0;
-        }
-
-        function applySilverGrandTotal() {
-            const v = parseFloat(document.getElementById('silverGrandTotalInput').value);
-            if (!isNaN(v) && v >= 0) adjustSilverTotalWith(v);
-        }
+            syncSilverTotals(); }
 
         // ============================================================
-        //  BILL REGISTER TABLE
+        // BILL REGISTER TABLE
         // ============================================================
         function renderBillList() {
             const container = document.getElementById("billContainer");
@@ -1752,7 +1857,7 @@
                 html += `<tr>
                     <td style="font-weight:500;">${it.metalName}</td>
                     <td style="font-weight:500;">${it.itemType}<br><span style="font-size:0.55rem;">rate: ₹${it.rate}/g</span></td>
-                    <td style="font-weight:500;">${it.metalCost}</td>
+                    <td style="font-weight:500;">${it.metalCost.toFixed(0)}</td>
                     <td style="font-weight:500;">${md}</td>
                     <td class="weight-display">${it.weight.toFixed(3)}</td>
                     <td style="font-weight:500;">₹${it.totalBeforeGst.toFixed(2)}</td>
@@ -1762,9 +1867,7 @@
             });
 
             html += `<tfoot><tr style="font-weight:800; background:#1e1e2f; color:#fff; font-size:0.85rem;">
-                
-                 <td><strong style="color:#f5b042;"></strong></td>
-                 <td colspan="2"><strong style="color:#fff;">TOTAL</strong></td>
+                <td></td><td colspan="2"><strong style="color:#fff;">TOTAL</strong></td>
                 <td><strong style="color:#f5b042;">₹${tm.toFixed(2)}</strong></td>
                 <td><strong style="color:#f5b042;">${tw.toFixed(3)}g</strong></td>
                 <td><strong style="color:#f5b042;">₹${tb.toFixed(2)}</strong></td>
@@ -1777,7 +1880,7 @@
         }
 
         // ============================================================
-        //  RENDER ALL
+        // RENDER ALL
         // ============================================================
         function renderAll() {
             renderBillList();
@@ -1789,7 +1892,7 @@
         }
 
         // ============================================================
-        //  APPLY BILL TOTAL TO GOLD
+        // APPLY BILL TOTAL TO GOLD
         // ============================================================
         function applyBillTotalToGold(newTotal) {
             const { goldTotal, silverTotal } = computeTotals();
@@ -1822,13 +1925,11 @@
         }
 
         // ============================================================
-        //  EVENT BINDINGS
+        // EVENT BINDINGS
         // ============================================================
         document.getElementById('clearAllBtn').addEventListener('click', clearAll);
         document.getElementById('resetGoldAdjustBtn').addEventListener('click', resetGold);
         document.getElementById('resetSilverAdjustBtn').addEventListener('click', resetSilver);
-        // document.getElementById('goldGrandTotalInput').addEventListener('change', applyGoldGrandTotal);
-        // document.getElementById('silverGrandTotalInput').addEventListener('change', applySilverGrandTotal);
         document.getElementById('viewGoldBtn').addEventListener('click', () => document.getElementById('goldAdjustContainer')
             .classList.toggle('visible'));
         document.getElementById('viewSilverBtn').addEventListener('click', () => document.getElementById(
@@ -1847,9 +1948,11 @@
             calculateAndUpdateUI(); });
         makingPct.addEventListener('input', handleManualPctChange);
         makingChg.addEventListener('input', handleManualChgChange);
+        makingPerGramGold.addEventListener('input', calculateAndUpdateUI);
+        makingPerGramSilver.addEventListener('input', calculateAndUpdateUI);
 
         // ============================================================
-        //  INIT
+        // INIT
         // ============================================================
         updateDynamicDropdown();
         setupFocus();
@@ -1877,5 +1980,4 @@
         }
     </script>
 </body>
-
 </html>
