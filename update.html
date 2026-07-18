@@ -1299,8 +1299,7 @@
                 return;
             }
             const mc = getCurrentMetalCost();
-            const s
-                il = isSilver(mv);
+            const sil = isSilver(mv);
             const makingPerGram = sil ? (parseFloat(makingPerGramSilver.value) || 0) : (parseFloat(makingPerGramGold.value) ||
             0);
             if (makingPerGram > 0) {
