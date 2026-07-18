@@ -977,11 +977,7 @@
                 <div class="field-group"><label>WEIGHT (g)</label><input type="number" id="weight" placeholder="0.00" step="any" value="0" tabindex="5" /></div>
                 <div class="btn-row"><button class="btn-add" id="addBtn" tabindex="6">➕ Add to Bill</button></div>
             </div>
-            <!-- making per gram inputs -->
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 6px 0 12px 0; background: #f8f2ea; padding: 8px 12px; border-radius: 14px;">
-                <div style="flex:1; min-width:120px;"><label style="font-size:0.6rem; font-weight:700; color:#5b6e5c;">MAKING / g (Gold)</label><input type="number" id="makingPerGramGold" placeholder="₹/g" step="any" value="0" style="width:100%; padding:4px 8px; border-radius:10px; border:1.5px solid #e2dbcf;" /></div>
-                <div style="flex:1; min-width:120px;"><label style="font-size:0.6rem; font-weight:700; color:#5b6e5c;">MAKING / g (Silver)</label><input type="number" id="makingPerGramSilver" placeholder="₹/g" step="any" value="0" style="width:100%; padding:4px 8px; border-radius:10px; border:1.5px solid #e2dbcf;" /></div>
-            </div>
+          
             <div class="price-cards">
                 <div class="price-item"><div class="price-label">💰 Metal Value</div><div class="price-value" id="metalValueDisplay">₹0.00</div></div>
                 <div class="price-item"><div class="price-label">🔨 Making %</div><input type="number" id="makingpercentage" class="making-input" placeholder="Auto" step="any" tabindex="7" /><div class="auto-badge" id="autoPercentHint">Auto: --%</div></div>
@@ -1032,7 +1028,14 @@
                 <button id="applyBillTotalBtn" class="apply-total-btn">Apply &amp; Adjust Gold</button>
                 <button id="resetBillTotalBtn" class="apply-total-btn reset-bill-total">↺ Reset</button>
             </div>
+
+            
         </div>
+          <!-- making per gram inputs -->
+            <div id="anonumous"; style="display: flex; flex-wrap: wrap; gap: 12px; margin: 6px 0 12px 0; background: #f8f2ea; padding: 8px 12px; border-radius: 14px;">
+                <div style="flex:1; min-width:120px;"><label style="font-size:0.6rem; font-weight:700; color:#5b6e5c;">MAKING / g (Gold)</label><input type="number" id="makingPerGramGold" placeholder="₹/g" step="any" value="0" style="width:100%; padding:4px 8px; border-radius:10px; border:1.5px solid #e2dbcf;" /></div>
+                <div style="flex:1; min-width:120px;"><label style="font-size:0.6rem; font-weight:700; color:#5b6e5c;">MAKING / g (Silver)</label><input type="number" id="makingPerGramSilver" placeholder="₹/g" step="any" value="0" style="width:100%; padding:4px 8px; border-radius:10px; border:1.5px solid #e2dbcf;" /></div>
+            </div>
 
     </div>
 
@@ -1296,7 +1299,8 @@
                 return;
             }
             const mc = getCurrentMetalCost();
-            const sil = isSilver(mv);
+            const s
+                il = isSilver(mv);
             const makingPerGram = sil ? (parseFloat(makingPerGramSilver.value) || 0) : (parseFloat(makingPerGramGold.value) ||
             0);
             if (makingPerGram > 0) {
