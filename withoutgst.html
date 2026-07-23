@@ -1231,7 +1231,7 @@
             if (mv === "22") return parseFloat(i22.value.replace(/,/g, '')) / 10;
             if (mv === "24") return parseFloat(i24.value.replace(/,/g, '')) / 10;
             if (mv === "1") return parseFloat(si.value.replace(/,/g, '')) / 1000;
-            if (mv === "92.5") return  parseFloat(si.value.replace(/,/g, '')) / 1000; // parseFloat(si925.value.replace(/,/g, '')) / 1000;
+            if (mv === "92.5") return parseFloat(si925.value.replace(/,/g, '')) / 1000;
             return 0;
         }
 
@@ -1869,7 +1869,7 @@
                 infoHtml +=
                     `<span class="karat-item"><span class="label">${k}K :</span> <span class="value" style="color:#b45309;font-size:1rem;">₹${val.toFixed(2)}</span></span>`;
             });
-            infoHtml +=`<span><span class="label" style="margin-left: 700px;margin-right: 10px"> Total Making / g : </span> <span class="value" style="color:#F52727;font-size:1.1rem;">₹ ${overallMakingPerGram.toFixed(2)}</span></span>`;
+            infoHtml +=`<span><span class="label" style="margin-left: 750px;margin-right: 10px"> Total Making / g : </span> <span class="value" style="color:#F52727;font-size:1.1rem;">₹ ${overallMakingPerGram.toFixed(2)}</span></span>`;
             infoHtml += `</div>`;
 
             let sw = 0,
@@ -1878,7 +1878,7 @@
                 svg = 0;
             let mkgpergram = 0;
             let tableHtml =
-                `<table class="adjustment-table" id="goldAdjTable"><thead><tr><th style="width:28px;min-width:28px;"></th><th>Item</th><th>Wt(g)</th><th>New Making</th><th>Value Without GST</th><th>Update W/O GST</th><th>Value With GST</th><th>Update W/ GST</th><th style="font-size:0.75rem;">Making / g</th></tr></thead><tbody>`;
+                `<table class="adjustment-table" id="goldAdjTable"><thead><tr><th style="width:28px;min-width:28px;"></th><th>Item</th><th>Wt(g)</th><th>Making/gram</th><th>Value Without GST</th><th>Update W/O GST</th><th>Value With GST</th><th>Update W/ GST</th><th style="font-size:0.75rem;">Updated Making</th></tr></thead><tbody>`;
 
             golds.forEach((item, idx) => {
                 const adj = goldAdjustData[item.id] || { newMaking: item.makingCharge, newFinal: item.finalPrice };
@@ -1896,16 +1896,17 @@
                     <td class="drag-cell" style="cursor:grab;text-align:center;font-size:1rem;color:#a18f6f;user-select:none;">⠿</td>
                     <td>${item.metalName}<br><span style="font-size:0.55rem;">₹${item.rate}/g</span></td>
                     <td class="weight-display">${item.weight.toFixed(3)}</td>
-                    <td class="making-display" style="color:${mc};">
-                        ₹${adj.newMaking.toFixed(0)} <span class="pct-red">(${pct.toFixed(1)}%)</span>
+                    <td class="making-display" style="color:${mc};" >
+                      <span class="pct-red" > ( ${item.weight.toFixed(3)} g )</span > <span font-weight=900px> ₹  ${(overallMakingPerGram.toFixed(2) * item.weight.toFixed(3)).toFixed(0)}</span>
                     </td>
                     <td class="value-without-gst">₹${vwg.toFixed(0)}</td>
                     <td><input type="number" id="g-upd-wout-${item.id}" class="adjustment-input" value="${vwg.toFixed(0)}" step="any"></td>
                     <td class="value-with-gst">₹${vwgst.toFixed(0)}</td>
                     <td><input type="number" id="g-upd-w-${item.id}" class="adjustment-input" value="${vwgst.toFixed(0)}" step="any"></td>
                     
-                    <td class="making-display" style="color:${mc};" >
-                      <span class="pct-red" > ( ${item.weight.toFixed(3)} g )</span > <span font-weight=900px> ₹  ${(overallMakingPerGram.toFixed(2) * item.weight.toFixed(3)).toFixed(0)}</span>
+                    
+                    <td class="making-display" style="color:${mc};"> <span class="pct-red">( ${item.weight.toFixed(3)} g )</span>
+                     <span style="font-size:1.2rem;">   ₹ ${adj.newMaking.toFixed(0)} </span> <span class="pct-red">[ ${pct.toFixed(3)} % ]</span>
                     </td>
                 </tr>`;
             });
@@ -2103,7 +2104,7 @@
                     <td class="value-with-gst">₹${vwgst.toFixed(0)}</td>
                     <td><input type="number" id="s-upd-w-${item.id}" class="adjustment-input" value="${vwgst.toFixed(0)}" step="any"></td>
                     <td class="making-display" style="color:${mc};">
-                        <span class="pct-red">( ${item.weight.toFixed(3)} ) </span> ₹ ${adj.newMaking.toFixed(0)} 
+                        <span class="pct-red">( ${item.weight.toFixed(3)}g ) </span> <span style="font-size:1.2rem;">₹ ${adj.newMaking.toFixed(0)} </span>
                     </td>
                    
                 </tr>`;
